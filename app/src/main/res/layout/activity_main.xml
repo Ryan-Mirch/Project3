@@ -10,7 +10,7 @@
         android:layout_width="199dp"
         android:layout_height="90dp"
         android:gravity="center|clip_vertical|center_horizontal|center_vertical"
-        android:text="Game Name!"
+        android:text="Divide"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
