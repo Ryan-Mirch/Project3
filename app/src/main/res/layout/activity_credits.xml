@@ -6,4 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".CreditsActivity">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="207dp"
+        android:layout_height="71dp"
+        android:text="Huge thanks to.. for the idea for this game"
+        tools:layout_editor_absoluteX="96dp"
+        tools:layout_editor_absoluteY="206dp" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Credits"
+        tools:layout_editor_absoluteX="98dp"
+        tools:layout_editor_absoluteY="63dp" />
 </android.support.constraint.ConstraintLayout>
