@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".CreditsActivity"></activity>
-        <activity android:name=".SettingsActivity" />
+        <activity android:name=".HowToPlayActivity" />
         <activity android:name=".GameActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

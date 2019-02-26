@@ -23,23 +23,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Game"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="467dp" />
+        tools:layout_editor_absoluteX="150dp"
+        tools:layout_editor_absoluteY="477dp" />
 
     <Button
-        android:id="@+id/button_settings"
-        android:layout_width="111dp"
+        android:id="@+id/button_howToPlay"
+        android:layout_width="142dp"
         android:layout_height="wrap_content"
-        android:text="Settings"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="541dp" />
+        android:onClick="howToPlay"
+        android:text="How To Play"
+        tools:layout_editor_absoluteX="134dp"
+        tools:layout_editor_absoluteY="545dp" />
 
     <Button
         android:id="@+id/button_credit"
         android:layout_width="111dp"
         android:layout_height="wrap_content"
         android:text="Credits"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="613dp" />
+        tools:layout_editor_absoluteX="150dp"
+        tools:layout_editor_absoluteY="612dp" />
 
 </android.support.constraint.ConstraintLayout>
