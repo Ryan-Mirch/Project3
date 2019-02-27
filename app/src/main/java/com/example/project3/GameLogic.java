@@ -11,9 +11,9 @@ public class GameLogic {
 
     public static void initializeGame(Canvas c){
         SegmentVertical initialSegment = new SegmentVertical(   c.getWidth()/2,
-                                                                c.getHeight() - 100,
+                                                                c.getHeight() - 200,
                                                                 c.getWidth()/2,
-                                                                c.getHeight() - 90);
+                                                                c.getHeight() - 200);
         segments.add(initialSegment);
         gameStarted = true;
     }
