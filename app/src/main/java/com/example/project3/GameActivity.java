@@ -5,9 +5,14 @@ import android.os.Bundle;
 
 public class GameActivity extends AppCompatActivity {
 
+    GameLayout gameLayoutView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+
+        gameLayoutView = new GameLayout(this);
+        setContentView(gameLayoutView);
+
     }
 }
