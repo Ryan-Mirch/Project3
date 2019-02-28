@@ -3,6 +3,7 @@ package com.example.project3;
 import android.graphics.Canvas;
 import android.graphics.Point;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class GameLogic {
@@ -12,19 +13,23 @@ public class GameLogic {
     private static int speed = 1;
     private static boolean gameStarted = false;
     private static ArrayList<Segment> segments = new ArrayList<>();
-    private static ArrayList<Segment> leadingSegments = new ArrayList<>();
 
-    private static boolean splitting = false; //splitting or going straight
     private static double timeOfLastSplit = 0;
+
+    public static int centerXPosition = 0;
+    public static int leadingYPosition = 0;
+    public static int garbageYPosition = 0;
 
 
 
     public static void initializeGame(Canvas c){
-        Segment initialSegment = new Segment(   c.getWidth()/2,
-                                                c.getHeight() - 300,
-                                                0);
+        centerXPosition = c.getWidth()/2;
+        leadingYPosition = c.getHeight() - 300;
+        garbageYPosition = c.getHeight() + 50;
+
+
+        Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0);
         segments.add(initialSegment);
-        leadingSegments.add(initialSegment);
         gameStarted = true;
     }
 
@@ -41,7 +46,8 @@ public class GameLogic {
 
     private static void addSegments(){
         ArrayList<Segment> segmentsToAdd = new ArrayList<>();
-        for(Segment s: leadingSegments){
+        for(Segment s: segments){
+            if(!s.getLeading())continue;
 
             Point upper = s.getUpper();
             int upperX = upper.x;
@@ -60,11 +66,28 @@ public class GameLogic {
             }
             s.setLeading(false);
         }
-        leadingSegments.clear();
 
         for(Segment s: segmentsToAdd){
             segments.add(s);
-            leadingSegments.add(s);
+        }
+    }
+
+    public static void updateSegments(){
+        ArrayList<Segment> segmentsToRemove = new ArrayList<>();
+
+        for(Segment s: segments){
+            s.updatePosition();
+            if(s.getUpper().x > garbageYPosition){
+                segmentsToRemove.add(s);
+            }
+        }
+
+        for(Segment s: segmentsToRemove){
+            segments.remove(s);
+        }
+
+        for(Segment s: getLeadingSegments()){
+            s.segmentCollisionCheck();
         }
     }
 
@@ -73,6 +96,12 @@ public class GameLogic {
     }
 
     public static ArrayList<Segment> getLeadingSegments(){
+         ArrayList<Segment> leadingSegments = new ArrayList<>();
+         for(Segment s: segments){
+             if(s.getLeading()){
+                 leadingSegments.add(s);
+             }
+         }
         return leadingSegments;
     }
 
@@ -83,13 +112,4 @@ public class GameLogic {
     public static boolean getGameStarted(){
         return gameStarted;
     }
-
-    //splitting = true, going straight = false.
-    public static boolean isSplitting(){
-        return splitting;
-    }
-
-
-
-
 }

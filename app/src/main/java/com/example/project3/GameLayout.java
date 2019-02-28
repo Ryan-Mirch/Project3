@@ -40,12 +40,11 @@ public class GameLayout extends View {
             GameLogic.initializeGame(canvas);
         }
 
+        GameLogic.updateSegments();
+
         for (Segment s : GameLogic.getSegments()){
-            s.update();
             canvas.drawPath(s.getPath(), blue_paintbrush_stroke);
         }
-
-        canvas.drawText(Boolean.toString(GameLogic.isSplitting()), 50,50, white_paintbrush_stroke);
 
         invalidate();
 

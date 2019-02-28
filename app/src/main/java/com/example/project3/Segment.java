@@ -3,6 +3,7 @@ package com.example.project3;
 
 import android.graphics.Path;
 import android.graphics.Point;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -48,6 +49,10 @@ public class Segment {
     }
 
     public void segmentCollisionCheck(){
+        Segment collidedSegment = this;
+
+        if (!isLeading) return; //only check for collision if it is leading
+
         for(Segment check: GameLogic.getLeadingSegments()){
             if(check == this)continue;
 
@@ -56,14 +61,38 @@ public class Segment {
 
             if(upperX < checkLeftBound && upperX > checkRightBound)continue; //no collision
 
+            if(upperX > checkLeftBound && upperX < checkRightBound){
+                collidedSegment = check;
+                break;
+            }
+        }
 
+        if(collidedSegment == this) return;
 
+        //if this is straight.
+        if(direction == 0){
+            collidedSegment.setLeading(false);
+        }
+
+        //if the collided segment is straight.
+        else if(collidedSegment.getDirection() == 0){
+            this.isLeading = false;
+        }
+
+        //if neither are straight.
+        else{
+            collidedSegment.setLeading(false);
+            this.isLeading = false;
+
+            int newUpperX = (int) ((upperX + collidedSegment.getUpper().x)*0.5);
+
+            Segment newSegment = new Segment(newUpperX, GameLogic.leadingYPosition, 0);
+            GameLogic.getSegments().add(newSegment);
         }
     }
 
-    public void update(){
+    public void updatePosition(){
         move();
-        segmentCollisionCheck();
         createShape();
     }
 
