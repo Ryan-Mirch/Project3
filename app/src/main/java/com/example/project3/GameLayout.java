@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.util.Log;
 import android.view.View;
 
 public class GameLayout extends View {
@@ -44,6 +42,9 @@ public class GameLayout extends View {
             s.update();
             canvas.drawPath(s.getPath(), blue_paintbrush_stroke);
         }
+
+        canvas.drawText(Boolean.toString(GameLogic.isSplitting()), 50,50, white_paintbrush_stroke);
+
         invalidate();
 
     }

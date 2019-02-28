@@ -2,6 +2,8 @@ package com.example.project3;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -14,5 +16,18 @@ public class GameActivity extends AppCompatActivity {
         gameLayoutView = new GameLayout(this);
         setContentView(gameLayoutView);
 
+        gameLayoutView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        GameLogic.toggleSplitting();
+                        break;
+                }
+                return true;
+            }
+        });
     }
+
+
 }
