@@ -8,21 +8,14 @@ import android.view.View;
 
 public class GameLayout extends View {
 
+
+
     Paint red_paintbrush_fill;
     Paint white_paintbrush_stroke, blue_paintbrush_stroke;
 
     public GameLayout(Context context){
         super(context);
         setBackgroundColor(Color.BLACK);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        if(!GameLogic.getGameStarted()){
-            GameLogic.initializeGame(canvas);
-        }
 
         white_paintbrush_stroke = new Paint();
         white_paintbrush_stroke.setColor(Color.WHITE);
@@ -36,9 +29,18 @@ public class GameLayout extends View {
         blue_paintbrush_stroke = new Paint();
         blue_paintbrush_stroke.setColor(Color.BLUE);
         blue_paintbrush_stroke.setStyle(Paint.Style.STROKE);
-        blue_paintbrush_stroke.setStrokeWidth(20);
+        blue_paintbrush_stroke.setStrokeWidth(GameLogic.SEGMENT_WIDTH);
+    }
 
-        for (SegmentInterface s : GameLogic.getSegments()){
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        if(!GameLogic.getGameStarted()){
+            GameLogic.initializeGame(canvas);
+        }
+
+        for (Segment s : GameLogic.getSegments()){
             s.update();
             canvas.drawPath(s.getPath(), blue_paintbrush_stroke);
         }
