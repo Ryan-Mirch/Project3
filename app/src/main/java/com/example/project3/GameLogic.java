@@ -8,7 +8,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class GameLogic {
-    public static final int SPLIT_INTERVAL = 500;  //in milliseconds
+    public static final int SPLIT_INTERVAL = 750;  //in milliseconds
     public static final int SEGMENT_WIDTH = 20;
 
     public static Region clip = new Region();
@@ -35,8 +35,8 @@ public class GameLogic {
 
         Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0);
 
-        Barrier permanentLeftBarrier = new Barrier(new Point(0,0), new Point(10,c.getHeight()),true);
-        Barrier permanentRightBarrier = new Barrier(new Point(c.getWidth() -10, 0), new Point(c.getWidth(), c.getHeight()), true);
+        Barrier permanentLeftBarrier = new Barrier(new Point(100,0), new Point(110,c.getHeight()),true);
+        Barrier permanentRightBarrier = new Barrier(new Point(c.getWidth() -110, 0), new Point(c.getWidth() - 100, c.getHeight()), true);
 
         segments.add(initialSegment);
         barriers.add(permanentLeftBarrier);
