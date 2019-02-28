@@ -3,6 +3,7 @@ package com.example.project3;
 
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.Region;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class Segment {
     private int upperY;
     private int lowerX;
     private int lowerY;
-    private Path shape;
+    private Path path;
 
     private boolean isLeading = true; //if leading, the upper of the segment doesn't move.
 
@@ -31,7 +32,7 @@ public class Segment {
     }
 
     public Path getPath(){
-        return shape;
+        return path;
     }
 
     private void move(){
@@ -48,6 +49,16 @@ public class Segment {
         }
     }
 
+    public void barrierCollisionCheck(){
+
+        for(Barrier check: GameLogic.getBarriers()){
+            if(check.getRegion().contains(upperX, upperY)){
+                Log.d("segment","segment hit barrier at  x: " + upperX + "  y: " + upperY);
+                isLeading = false;
+            }
+        }
+    }
+
     public void segmentCollisionCheck(){
         Segment collidedSegment = this;
 
@@ -56,8 +67,8 @@ public class Segment {
         for(Segment check: GameLogic.getLeadingSegments()){
             if(check == this)continue;
 
-            int checkLeftBound = check.getUpper().x - GameLogic.getSpeed();
-            int checkRightBound = check.getUpper().x + GameLogic.getSpeed();
+            int checkLeftBound = check.getUpper().x - GameLogic.getSpeed()*2;
+            int checkRightBound = check.getUpper().x + GameLogic.getSpeed()*2;
 
             if(upperX < checkLeftBound && upperX > checkRightBound)continue; //no collision
 
@@ -97,9 +108,10 @@ public class Segment {
     }
 
     private void createShape(){
-        shape = new Path();
-        shape.moveTo(upperX,upperY);
-        shape.lineTo(lowerX, lowerY);
+        path = new Path();
+        path.moveTo(upperX,upperY);
+        path.lineTo(lowerX, lowerY);
+        path.close();
     }
 
     public void setLeading(boolean b){

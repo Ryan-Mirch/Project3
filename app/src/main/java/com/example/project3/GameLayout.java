@@ -11,7 +11,7 @@ public class GameLayout extends View {
 
 
     Paint red_paintbrush_fill;
-    Paint white_paintbrush_stroke, blue_paintbrush_stroke;
+    Paint white_paintbrush_stroke, blue_paintbrush_stroke, green_paintbrush_stroke;
 
     public GameLayout(Context context){
         super(context);
@@ -30,6 +30,11 @@ public class GameLayout extends View {
         blue_paintbrush_stroke.setColor(Color.BLUE);
         blue_paintbrush_stroke.setStyle(Paint.Style.STROKE);
         blue_paintbrush_stroke.setStrokeWidth(GameLogic.SEGMENT_WIDTH);
+
+        green_paintbrush_stroke = new Paint();
+        green_paintbrush_stroke.setColor(Color.GREEN);
+        green_paintbrush_stroke.setStyle(Paint.Style.STROKE);
+        green_paintbrush_stroke.setStrokeWidth(GameLogic.SEGMENT_WIDTH);
     }
 
     @Override
@@ -40,10 +45,15 @@ public class GameLayout extends View {
             GameLogic.initializeGame(canvas);
         }
 
+        GameLogic.updateBarriers();
         GameLogic.updateSegments();
 
         for (Segment s : GameLogic.getSegments()){
             canvas.drawPath(s.getPath(), blue_paintbrush_stroke);
+        }
+
+        for (Barrier b : GameLogic.getBarriers()){
+            canvas.drawPath(b.getPath(), green_paintbrush_stroke);
         }
 
         invalidate();
