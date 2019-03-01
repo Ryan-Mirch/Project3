@@ -21,7 +21,7 @@ public class GameActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 switch(event.getAction()){
                     case MotionEvent.ACTION_DOWN:
-                        GameLogic.split();
+                        GameLogic.screenPressed();
                         break;
                 }
                 return true;

@@ -8,17 +8,18 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class GameLogic {
-    public static final int SPLIT_INTERVAL = 750;  //in milliseconds
+    public static final int SPLIT_INTERVAL = 400;  //in milliseconds
     public static final int SEGMENT_WIDTH = 20;
 
     public static Region clip = new Region();
 
     private static int speed = 1;
     private static boolean gameStarted = false;
+    private static String nextPress = "divide"; //either 'divide' or 'straighten'
     private static ArrayList<Segment> segments = new ArrayList<>();
     private static ArrayList<Barrier> barriers = new ArrayList<>();
 
-    private static double timeOfLastSplit = 0;
+    private static double lastPressTime = 0;
 
     public static int centerXPosition = 0;
     public static int leadingYPosition = 0;
@@ -46,42 +47,58 @@ public class GameLogic {
     }
 
     //will only work if timeOfLastSplit + SPLIT_INTERVAL is less than current time
-    public static void split(){
-        if(timeOfLastSplit + SPLIT_INTERVAL < System.currentTimeMillis()){
-            timeOfLastSplit = System.currentTimeMillis();
+    public static void screenPressed(){
+
+        if(nextPress.equals("divide")){
             addSegments();
+            nextPress = "straighten";
+            lastPressTime = System.currentTimeMillis();
         }
-        else{
-            //pressing the split button too fast.
+
+        else if( nextPress.equals("straighten") &&
+                (lastPressTime + SPLIT_INTERVAL < System.currentTimeMillis())){
+
+            straightenSegments();
+            nextPress = "divide";
         }
+
+
+    }
+
+    private static void straightenSegments(){
+        ArrayList<Segment> segmentsToAdd = new ArrayList<>();
+
+        for(Segment s: getLeadingSegments()) {
+            if(s.getDirection() != 0){
+                Segment newSegment = new Segment(s.getUpper().x, s.getUpper().y, 0);
+                segmentsToAdd.add(newSegment);
+                s.setLeading(false);
+            }
+        }
+
+        segments.addAll(segmentsToAdd);
     }
 
     private static void addSegments(){
         ArrayList<Segment> segmentsToAdd = new ArrayList<>();
-        for(Segment s: segments){
-            if(!s.getLeading())continue;
 
-            Point upper = s.getUpper();
-            int upperX = upper.x;
-            int upperY = upper.y;
+        for(Segment s: getLeadingSegments()){
 
-            if(s.getDirection() != 0){
-                Segment newSegment = new Segment(upperX, upperY, 0);
+            if(s.getDirection() != -1){
+                Segment newSegment = new Segment(s.getUpper().x, s.getUpper().y, -1);
                 segmentsToAdd.add(newSegment);
             }
 
-            else{
-                Segment newLeftSegment = new Segment(upperX, upperY, -1);
-                Segment newRightSegment = new Segment(upperX, upperY, 1);
-                segmentsToAdd.add(newLeftSegment);
-                segmentsToAdd.add(newRightSegment);
+            if(s.getDirection() != 1){
+                Segment newSegment = new Segment(s.getUpper().x, s.getUpper().y, 1);
+                segmentsToAdd.add(newSegment);
             }
-            s.setLeading(false);
-        }
 
-        for(Segment s: segmentsToAdd){
-            segments.add(s);
+            if(s.getDirection() == 0){
+                s.setLeading(false);
+            }
         }
+        segments.addAll(segmentsToAdd);
     }
 
     public static void updateBarriers(){
