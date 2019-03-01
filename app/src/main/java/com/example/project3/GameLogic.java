@@ -12,6 +12,8 @@ public class GameLogic {
     public static final int SPLIT_INTERVAL = 400;  //in milliseconds
     public static final int SEGMENT_WIDTH = 20;
 
+    public static Canvas canvas;
+
     public static Region clip = new Region();
 
     private static Random random = new Random();
@@ -37,7 +39,7 @@ public class GameLogic {
 
 
     public static void initializeGame(Canvas c){
-
+        canvas = c;
         if(!startNewGame)return;
 
         nextPress = "divide";
@@ -65,6 +67,8 @@ public class GameLogic {
 
     public static void screenPressed(){
 
+
+        //if every segment is straight, pressing will divide, even if the next press should straighten.
         boolean diagonal = false;
         for(Segment s: getLeadingSegments()){
             if(s.getDirection() != 0){
@@ -94,8 +98,10 @@ public class GameLogic {
 
     public static void spawnObjects(){
 
-        Barrier small = new Barrier(new Point(0,0), new Point(50,10), false); // type: 0
-        Barrier large = new Barrier(new Point(0,0), new Point(100,10), false); // type: 1
+        int xPos = random.nextInt(canvas.getWidth());
+
+        Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10), false); // type: 0
+        Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10), false); // type: 1
 
         int barrierType = random.nextInt(2);
         int spawnChance = random.nextInt(barrierSpawnFrequency * 1000);
