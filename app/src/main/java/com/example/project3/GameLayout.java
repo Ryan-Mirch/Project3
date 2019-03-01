@@ -40,6 +40,7 @@ public class GameLayout extends View {
         super.onDraw(canvas);
 
         GameLogic.initializeGame(canvas);
+        GameLogic.spawnObjects();
         GameLogic.updateBarriers();
         GameLogic.updateSegments();
 

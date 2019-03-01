@@ -53,13 +53,13 @@
         android:layout_marginBottom="20dp"
         android:onClick="howToPlay"
         android:text="How To Play"
-        app:layout_constraintBottom_toTopOf="@+id/button_credit"
+        app:layout_constraintBottom_toTopOf="@+id/button_credits"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button_credit"
+        android:id="@+id/button_credits"
         android:layout_width="141dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

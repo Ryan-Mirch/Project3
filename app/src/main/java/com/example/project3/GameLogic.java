@@ -6,6 +6,7 @@ import android.graphics.Region;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameLogic {
     public static final int SPLIT_INTERVAL = 400;  //in milliseconds
@@ -13,7 +14,11 @@ public class GameLogic {
 
     public static Region clip = new Region();
 
+    private static Random random = new Random();
+
     private static int speed = 1;
+    private static int barrierSpawnFrequency = 4; // 1 every x seconds, on average.
+
     private static boolean gamePlaying = false;
     private static boolean startNewGame = false;
     private static String nextPress = "divide"; //either 'divide' or 'straighten
@@ -23,6 +28,7 @@ public class GameLogic {
     private static ArrayList<Barrier> barriers = new ArrayList<>();
 
     private static double lastPressTime = 0;
+    private static double lastBarrierSpawnTime = 0;
 
     public static int centerXPosition = 0;
     public static int leadingYPosition = 0;
@@ -59,6 +65,16 @@ public class GameLogic {
 
     public static void screenPressed(){
 
+        boolean diagonal = false;
+        for(Segment s: getLeadingSegments()){
+            if(s.getDirection() != 0){
+                diagonal = true;
+                break;
+            }
+        }
+
+        if(!diagonal)nextPress = "divide";
+
         if(nextPress.equals("divide")){
             addSegments();
             nextPress = "straighten";
@@ -74,6 +90,27 @@ public class GameLogic {
         }
 
 
+    }
+
+    public static void spawnObjects(){
+
+        Barrier small = new Barrier(new Point(0,0), new Point(50,10), false); // type: 0
+        Barrier large = new Barrier(new Point(0,0), new Point(100,10), false); // type: 1
+
+        int barrierType = random.nextInt(2);
+        int spawnChance = random.nextInt(barrierSpawnFrequency * 1000);
+
+        if(spawnChance == 1 || lastBarrierSpawnTime + (1000 * barrierSpawnFrequency * 1.5) < System.currentTimeMillis()){
+            lastBarrierSpawnTime = System.currentTimeMillis();
+            switch (barrierType){
+                case 0:
+                    barriers.add(small);
+                    break;
+                case 1:
+                    barriers.add(large);
+                    break;
+            }
+        }
     }
 
     private static void straightenSegments(){
@@ -123,7 +160,7 @@ public class GameLogic {
         }
 
         for(Barrier b: barriersToRemove){
-            segments.remove(b);
+            barriers.remove(b);
         }
     }
 

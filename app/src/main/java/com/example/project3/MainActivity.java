@@ -10,6 +10,7 @@ public class MainActivity extends AppCompatActivity {
     private Button button_howToPlay;
     private Button button_newGame;
     private Button button_continue;
+    private Button button_credits;
 
     @Override
     protected void onPostResume() {
@@ -25,7 +26,14 @@ public class MainActivity extends AppCompatActivity {
         button_howToPlay = findViewById(R.id.button_howToPlay);
         button_continue = findViewById(R.id.button_continue);
         button_newGame = findViewById(R.id.button_newGame);
+        button_credits = findViewById(R.id.button_credits);
 
+        button_credits.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                openCreditsActivity();
+            }
+        });
 
         button_howToPlay.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -47,13 +55,15 @@ public class MainActivity extends AppCompatActivity {
                 openGameActivity(false);
             }
         });
-
-
-
     }
 
     public void openHowToPlayActivity(){
         Intent intent = new Intent(this, HowToPlayActivity.class);
+        startActivity(intent);
+    }
+
+    public void openCreditsActivity(){
+        Intent intent = new Intent(this, CreditsActivity.class);
         startActivity(intent);
     }
 
