@@ -8,7 +8,14 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
     private Button button_howToPlay;
-    private Button button_startGame;
+    private Button button_newGame;
+    private Button button_continue;
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        button_continue.setEnabled(GameLogic.getGamePlaying());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +23,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         button_howToPlay = findViewById(R.id.button_howToPlay);
-        button_startGame = findViewById(R.id.button_startGame);
+        button_continue = findViewById(R.id.button_continue);
+        button_newGame = findViewById(R.id.button_newGame);
 
 
         button_howToPlay.setOnClickListener(new View.OnClickListener(){
@@ -26,12 +34,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        button_startGame.setOnClickListener(new View.OnClickListener(){
+        button_newGame.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                openGameActivity();
+                openGameActivity(true);
             }
         });
+
+        button_continue.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                openGameActivity(false);
+            }
+        });
+
+
+
     }
 
     public void openHowToPlayActivity(){
@@ -39,8 +57,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void openGameActivity(){
+    public void openGameActivity(boolean startNewGame){
         Intent intent = new Intent(this, GameActivity.class);
+        GameLogic.setStartNewGame(startNewGame);
         startActivity(intent);
     }
 }

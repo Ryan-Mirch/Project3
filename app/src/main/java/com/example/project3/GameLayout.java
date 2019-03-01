@@ -8,8 +8,6 @@ import android.view.View;
 
 public class GameLayout extends View {
 
-
-
     Paint red_paintbrush_fill;
     Paint white_paintbrush_stroke, blue_paintbrush_stroke, green_paintbrush_stroke;
 
@@ -41,10 +39,7 @@ public class GameLayout extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if(!GameLogic.getGameStarted()){
-            GameLogic.initializeGame(canvas);
-        }
-
+        GameLogic.initializeGame(canvas);
         GameLogic.updateBarriers();
         GameLogic.updateSegments();
 

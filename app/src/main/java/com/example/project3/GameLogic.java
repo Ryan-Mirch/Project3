@@ -14,8 +14,11 @@ public class GameLogic {
     public static Region clip = new Region();
 
     private static int speed = 1;
-    private static boolean gameStarted = false;
-    private static String nextPress = "divide"; //either 'divide' or 'straighten'
+    private static boolean gamePlaying = false;
+    private static boolean startNewGame = false;
+    private static String nextPress = "divide"; //either 'divide' or 'straighten
+
+
     private static ArrayList<Segment> segments = new ArrayList<>();
     private static ArrayList<Barrier> barriers = new ArrayList<>();
 
@@ -28,6 +31,12 @@ public class GameLogic {
 
 
     public static void initializeGame(Canvas c){
+
+        if(!startNewGame)return;
+
+        nextPress = "divide";
+        segments.clear();
+
         centerXPosition = c.getWidth()/2;
         leadingYPosition = c.getHeight() - 300;
         garbageYPosition = c.getHeight() + 50;
@@ -43,10 +52,11 @@ public class GameLogic {
         barriers.add(permanentLeftBarrier);
         barriers.add(permanentRightBarrier);
 
-        gameStarted = true;
+        gamePlaying = true;
+        startNewGame = false;
     }
 
-    //will only work if timeOfLastSplit + SPLIT_INTERVAL is less than current time
+
     public static void screenPressed(){
 
         if(nextPress.equals("divide")){
@@ -55,6 +65,7 @@ public class GameLogic {
             lastPressTime = System.currentTimeMillis();
         }
 
+        //will only work if timeOfLastSplit + SPLIT_INTERVAL is less than current time
         else if( nextPress.equals("straighten") &&
                 (lastPressTime + SPLIT_INTERVAL < System.currentTimeMillis())){
 
@@ -158,7 +169,11 @@ public class GameLogic {
         return speed;
     }
 
-    public static boolean getGameStarted(){
-        return gameStarted;
+    public static boolean getGamePlaying(){
+        return gamePlaying;
+    }
+
+    public static void setStartNewGame(boolean b){
+        startNewGame = b;
     }
 }
