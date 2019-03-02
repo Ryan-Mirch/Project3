@@ -103,7 +103,7 @@ public class GameLogic {
         Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10), false); // type: 0
         Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10), false); // type: 1
 
-        int barrierType = random.nextInt(2);
+        int barrierType = random.nextInt(2); //random number from 0 to 1;
         int spawnChance = random.nextInt(barrierSpawnFrequency * 1000);
 
         if(spawnChance == 1 || lastBarrierSpawnTime + (1000 * barrierSpawnFrequency * 1.5) < System.currentTimeMillis()){
