@@ -15,18 +15,6 @@ public class GameActivity extends AppCompatActivity {
 
         gameLayoutView = new GameLayout(this);
         setContentView(gameLayoutView);
-
-        gameLayoutView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        GameLogic.screenPressed();
-                        break;
-                }
-                return true;
-            }
-        });
     }
 
 

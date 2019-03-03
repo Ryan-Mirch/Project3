@@ -4,15 +4,21 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.view.View;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
-public class GameLayout extends View {
+public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
 
-    Paint red_paintbrush_fill;
-    Paint white_paintbrush_stroke, blue_paintbrush_stroke, green_paintbrush_stroke;
+    private MainThread thread;
 
     public GameLayout(Context context){
         super(context);
+        getHolder().addCallback(this);
+        thread = new MainThread(getHolder(), this);
+        setFocusable(true);
+
+        /*
         setBackgroundColor(Color.BLACK);
 
         white_paintbrush_stroke = new Paint();
@@ -23,36 +29,58 @@ public class GameLayout extends View {
         red_paintbrush_fill = new Paint();
         red_paintbrush_fill.setColor(Color.RED);
         red_paintbrush_fill.setStyle(Paint.Style.FILL);
-
-        blue_paintbrush_stroke = new Paint();
-        blue_paintbrush_stroke.setColor(Color.BLUE);
-        blue_paintbrush_stroke.setStyle(Paint.Style.STROKE);
-        blue_paintbrush_stroke.setStrokeWidth(GameLogic.SEGMENT_WIDTH);
-
-        green_paintbrush_stroke = new Paint();
-        green_paintbrush_stroke.setColor(Color.GREEN);
-        green_paintbrush_stroke.setStyle(Paint.Style.STROKE);
-        green_paintbrush_stroke.setStrokeWidth(GameLogic.SEGMENT_WIDTH);
+        */
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
-        GameLogic.initializeGame(canvas);
-        GameLogic.spawnObjects();
-        GameLogic.updateBarriers();
-        GameLogic.updateSegments();
+    }
 
-        for (Segment s : GameLogic.getSegments()){
-            canvas.drawPath(s.getPath(), blue_paintbrush_stroke);
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        thread = new MainThread(getHolder(), this);
+        thread.setRunning(true);
+        thread.start();
+
+        GameLogic.initializeGame();
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        boolean retry = true;
+        while (retry){
+            try {
+                thread.setRunning(false);
+                thread.join();
+            } catch (Exception e) {e.printStackTrace();}
+
+            retry = false;
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        switch(event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                GameLogic.setScreenWasPressed(true);
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public void draw(Canvas canvas){
+        super.draw(canvas);
+
+        canvas.drawColor(Color.BLACK);
+
+        for(Barrier barrier: GameLogic.getBarriers()){
+            barrier.draw(canvas);
         }
 
-        for (Barrier b : GameLogic.getBarriers()){
-            canvas.drawPath(b.getPath(), green_paintbrush_stroke);
+        for(Segment segment: GameLogic.getSegments()){
+            segment.draw(canvas);
         }
-
-        invalidate();
-
     }
 }

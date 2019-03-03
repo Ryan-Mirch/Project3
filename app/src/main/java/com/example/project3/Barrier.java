@@ -1,6 +1,9 @@
 package com.example.project3;
 
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -9,7 +12,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-public class Barrier {
+public class Barrier implements GameObject{
     private ArrayList<Point> points;
     private Path path;
     private boolean isStatic; //if static, the barrier will stay still
@@ -39,19 +42,31 @@ public class Barrier {
         createShape();
     }
 
-    private void move(){
+    private void move(long frameTime){
         int speed = GameLogic.getSpeed();
+        int pixelsToMove = (int) (speed * (frameTime/(1000/MainThread.MAX_FPS)));
 
         for(Point p: points){
-            p.y += speed;
+            p.y += pixelsToMove;
         }
 
     }
 
-    public void updatePosition(){
+    @Override
+    public void update(long frameTime){
         if(isStatic)return;
-        move();
+        move(frameTime);
         createShape();
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setColor(Color.GREEN);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(GameLogic.SEGMENT_WIDTH);
+
+        canvas.drawPath(path, paint);
     }
 
     private void createShape(){

@@ -1,6 +1,9 @@
 package com.example.project3;
 
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Region;
@@ -8,7 +11,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-public class Segment {
+public class Segment implements GameObject{
     private int upperX;
     private int upperY;
     private int lowerX;
@@ -26,30 +29,46 @@ public class Segment {
         this.upperX = upperX;
         this.upperY = upperY;
         this.lowerX = upperX;
-        this.lowerY = upperY;
+        this.lowerY = upperY + 5;
         this.direction = direction;
         createShape();
     }
 
-    public Path getPath(){
-        return path;
+    @Override
+    public void update(long frameTime){
+        move(frameTime);
+        segmentCollisionCheck();
+        barrierCollisionCheck();
+        createShape();
     }
 
-    private void move(){
-        int speed = GameLogic.getSpeed();
+    @Override
+    public void draw(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setColor(Color.BLUE);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(GameLogic.SEGMENT_WIDTH);
 
-        lowerY += speed;
+        canvas.drawPath(path,paint);
+    }
+
+    private void move(long frameTime){
+        int speed = GameLogic.getSpeed();
+        int pixelsToMove = (int) (speed * (frameTime/(1000/MainThread.MAX_FPS)));
+
+        lowerY += pixelsToMove;
 
         if(direction != 0 && isLeading){
-            upperX += speed * direction;
+            upperX += pixelsToMove * direction;
         }
 
         if(!isLeading){
-            upperY += speed;
+            upperY += pixelsToMove;
         }
     }
 
-    public void barrierCollisionCheck(){
+    private void barrierCollisionCheck(){
+        if (!isLeading) return; //only check for collision if it is leading
 
         for(Barrier check: GameLogic.getBarriers()){
             if(check.getRegion().contains(upperX, upperY)){
@@ -59,10 +78,10 @@ public class Segment {
         }
     }
 
-    public void segmentCollisionCheck(){
-        Segment collidedSegment = this;
-
+    private void segmentCollisionCheck(){
         if (!isLeading) return; //only check for collision if it is leading
+
+        Segment collidedSegment = this;
 
         for(Segment check: GameLogic.getLeadingSegments()){
             if(check == this)continue;
@@ -98,13 +117,8 @@ public class Segment {
             int newUpperX = (int) ((upperX + collidedSegment.getUpper().x)*0.5);
 
             Segment newSegment = new Segment(newUpperX, GameLogic.leadingYPosition, 0);
-            GameLogic.getSegments().add(newSegment);
+            GameLogic.getNewSegments().add(newSegment);
         }
-    }
-
-    public void updatePosition(){
-        move();
-        createShape();
     }
 
     private void createShape(){
@@ -128,6 +142,10 @@ public class Segment {
 
     public int getDirection(){
         return direction;
+    }
+
+    public Path getPath(){
+        return path;
     }
 
 }

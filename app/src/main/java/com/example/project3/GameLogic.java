@@ -1,33 +1,39 @@
 package com.example.project3;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Region;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class GameLogic {
     public static final int SPLIT_INTERVAL = 400;  //in milliseconds
     public static final int SEGMENT_WIDTH = 20;
 
-    public static Canvas canvas;
-
     public static Region clip = new Region();
 
     private static Random random = new Random();
 
-    private static int speed = 1;
+    private static int ySpeed = 4;
     private static int barrierSpawnFrequency = 4; // 1 every x seconds, on average.
 
     private static boolean gamePlaying = false;
     private static boolean startNewGame = false;
+    private static boolean screenWasPressed = false;
     private static String nextPress = "divide"; //either 'divide' or 'straighten
 
 
-    private static ArrayList<Segment> segments = new ArrayList<>();
-    private static ArrayList<Barrier> barriers = new ArrayList<>();
+    private static List<Segment> segments = Collections.synchronizedList(new ArrayList<Segment>());
+    private static List<Barrier> barriers = Collections.synchronizedList(new ArrayList<Barrier>());
+    private static ArrayList<Segment> newSegments = new ArrayList<>();
 
     private static double lastPressTime = 0;
     private static double lastBarrierSpawnTime = 0;
@@ -38,23 +44,23 @@ public class GameLogic {
 
 
 
-    public static void initializeGame(Canvas c){
-        canvas = c;
+    public static void initializeGame(){
         if(!startNewGame)return;
 
         nextPress = "divide";
         segments.clear();
+        barriers.clear();
 
-        centerXPosition = c.getWidth()/2;
-        leadingYPosition = c.getHeight() - 300;
-        garbageYPosition = c.getHeight() + 50;
-        clip.set(0,0, c.getWidth(), c.getHeight());
+        centerXPosition = getWidth()/2;
+        leadingYPosition = getHeight() - 400;
+        garbageYPosition = getHeight() + 50;
+        clip.set(0,0, getWidth(), getHeight());
 
 
         Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0);
 
-        Barrier permanentLeftBarrier = new Barrier(new Point(100,0), new Point(110,c.getHeight()),true);
-        Barrier permanentRightBarrier = new Barrier(new Point(c.getWidth() -110, 0), new Point(c.getWidth() - 100, c.getHeight()), true);
+        Barrier permanentLeftBarrier = new Barrier(new Point(100,0), new Point(110, getHeight()),true);
+        Barrier permanentRightBarrier = new Barrier(new Point(getWidth() -110, 0), new Point(getWidth() - 100, getHeight()), true);
 
         segments.add(initialSegment);
         barriers.add(permanentLeftBarrier);
@@ -64,10 +70,23 @@ public class GameLogic {
         startNewGame = false;
     }
 
+    public static void gameLoop(long frameTime){
+        spawnObjects();
+        screenPressed();
+        for(Barrier barrier: barriers)barrier.update(frameTime);
+        for(Segment segment: segments)segment.update(frameTime);
+        addNewSegments();
+        removeOffscreenObjects();
+    }
+
+    private static void addNewSegments(){
+        segments.addAll(newSegments);
+        newSegments.clear();
+    }
 
     public static void screenPressed(){
-
-
+        if(!screenWasPressed)return;
+        Log.d("Input", "screen pressed");
         //if every segment is straight, pressing will divide, even if the next press should straighten.
         boolean diagonal = false;
         for(Segment s: getLeadingSegments()){
@@ -80,7 +99,7 @@ public class GameLogic {
         if(!diagonal)nextPress = "divide";
 
         if(nextPress.equals("divide")){
-            addSegments();
+            divide();
             nextPress = "straighten";
             lastPressTime = System.currentTimeMillis();
         }
@@ -92,13 +111,13 @@ public class GameLogic {
             straightenSegments();
             nextPress = "divide";
         }
-
+        screenWasPressed = false;
 
     }
 
     public static void spawnObjects(){
 
-        int xPos = random.nextInt(canvas.getWidth());
+        int xPos = random.nextInt(getWidth());
 
         Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10), false); // type: 0
         Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10), false); // type: 1
@@ -133,19 +152,21 @@ public class GameLogic {
         segments.addAll(segmentsToAdd);
     }
 
-    private static void addSegments(){
+    private static void divide(){
         ArrayList<Segment> segmentsToAdd = new ArrayList<>();
 
         for(Segment s: getLeadingSegments()){
 
             if(s.getDirection() != -1){
-                Segment newSegment = new Segment(s.getUpper().x, s.getUpper().y, -1);
+                Segment newSegment = new Segment(s.getUpper().x - 2, s.getUpper().y, -1);
                 segmentsToAdd.add(newSegment);
+                Log.d("Segment", "new segment created");
             }
 
             if(s.getDirection() != 1){
-                Segment newSegment = new Segment(s.getUpper().x, s.getUpper().y, 1);
+                Segment newSegment = new Segment(s.getUpper().x + 2, s.getUpper().y, 1);
                 segmentsToAdd.add(newSegment);
+                Log.d("Segment", "new segment created");
             }
 
             if(s.getDirection() == 0){
@@ -155,47 +176,36 @@ public class GameLogic {
         segments.addAll(segmentsToAdd);
     }
 
-    public static void updateBarriers(){
+    public static void removeOffscreenObjects(){
+        ArrayList<Segment> segmentsToRemove = new ArrayList<>();
         ArrayList<Barrier> barriersToRemove = new ArrayList<>();
 
-        for(Barrier b: barriers){
-            b.updatePosition();
-            if(b.belowPoint(garbageYPosition)){
-                barriersToRemove.add(b);
-            }
-        }
-
-        for(Barrier b: barriersToRemove){
-            barriers.remove(b);
-        }
-    }
-
-    public static void updateSegments(){
-        ArrayList<Segment> segmentsToRemove = new ArrayList<>();
-
         for(Segment s: segments){
-            s.updatePosition();
             if(s.getUpper().y > garbageYPosition){
                 segmentsToRemove.add(s);
             }
         }
 
-        for(Segment s: segmentsToRemove){
-            segments.remove(s);
+        for(Barrier b: barriers){
+            if(b.belowPoint(garbageYPosition)){
+                barriersToRemove.add(b);
+            }
         }
 
-        for(Segment s: getLeadingSegments()){
-            s.segmentCollisionCheck();
-            s.barrierCollisionCheck();
-        }
+        segments.removeAll(segmentsToRemove);
+        barriers.removeAll(barriersToRemove);
     }
 
-    public static ArrayList<Segment> getSegments(){
+    public static List<Segment> getSegments(){
         return segments;
     }
 
-    public static ArrayList<Barrier> getBarriers(){
+    public static List<Barrier> getBarriers(){
         return barriers;
+    }
+
+    public static ArrayList<Segment> getNewSegments(){
+        return newSegments;
     }
 
     public static ArrayList<Segment> getLeadingSegments(){
@@ -209,7 +219,7 @@ public class GameLogic {
     }
 
     public static int getSpeed(){
-        return speed;
+        return ySpeed;
     }
 
     public static boolean getGamePlaying(){
@@ -218,5 +228,17 @@ public class GameLogic {
 
     public static void setStartNewGame(boolean b){
         startNewGame = b;
+    }
+
+    public static int getWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    public static int getHeight() {
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
+    }
+
+    public static void setScreenWasPressed(boolean screenWasPressed) {
+        GameLogic.screenWasPressed = screenWasPressed;
     }
 }
