@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Random;
 
 public class GameLogic {
-    public static final int SPLIT_INTERVAL = 400;  //in milliseconds
+    public static final int SPLIT_INTERVAL = 100;  //in milliseconds
     public static final int SEGMENT_WIDTH = 20;
 
     public static Region clip = new Region();
@@ -23,8 +23,10 @@ public class GameLogic {
     private static Random random = new Random();
 
     private static int ySpeed = 8;
-    private static int barrierSpawnFrequency = 4; // 1 every x seconds, on average.
-    private static int trapSpawnFrequency = 3; // 1 every x seconds, on average.
+    private static int barrierMaxSpawnDelay = 7; // 1 every x seconds at least.
+    private static int trapMaxSpawnDelay = 5; // 1 every x seconds, at least.
+
+    private static int currentID = 0;
 
     private static boolean gamePlaying = false;
     private static boolean startNewGame = false;
@@ -38,8 +40,9 @@ public class GameLogic {
     private static ArrayList<Segment> newSegments = new ArrayList<>();
 
     private static double lastPressTime = 0;
-    private static double lastBarrierSpawnTime = 0;
-    private static double lastTrapSpawnTime = 0;
+
+    private static double nextBarrierSpawnTime = 0;
+    private static double nextTrapSpawnTime = 0;
 
     public static int centerXPosition = 0;
     public static int leadingYPosition = 0;
@@ -61,7 +64,7 @@ public class GameLogic {
         clip.set(0,0, getWidth(), getHeight());
 
 
-        Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0);
+        Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0, 0);
 
         Barrier permanentLeftBarrier = new Barrier(new Point(100,0), new Point(110, getHeight()),true);
         Barrier permanentRightBarrier = new Barrier(new Point(getWidth() -110, 0), new Point(getWidth() - 100, getHeight()), true);
@@ -122,45 +125,44 @@ public class GameLogic {
     }
 
     public static void spawnBarriers(){
-        int spawnChance = random.nextInt(barrierSpawnFrequency * 1000);
-        if(spawnChance == 1 || lastBarrierSpawnTime + (1000 * barrierSpawnFrequency * 1.5) < System.currentTimeMillis()){
+        if(nextBarrierSpawnTime > System.currentTimeMillis())return;
 
-            lastBarrierSpawnTime = System.currentTimeMillis();
-            int xPos = random.nextInt(getWidth());
-            int barrierType = random.nextInt(2); //random number from 0 to 1;
+        int randomSpawnTime = random.nextInt(1000*barrierMaxSpawnDelay);
+        nextBarrierSpawnTime = System.currentTimeMillis() + randomSpawnTime;
 
-            switch (barrierType){
-                case 0:
-                    Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10), false); // type: 0
-                    barriers.add(small);
-                    break;
-                case 1:
-                    Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10), false); // type: 1
-                    barriers.add(large);
-                    break;
-            }
+        int xPos = random.nextInt(getWidth());
+        int barrierType = random.nextInt(2); //random number from 0 to 1;
+
+        switch (barrierType){
+            case 0:
+                Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10), false); // type: 0
+                barriers.add(small);
+                break;
+            case 1:
+                Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10), false); // type: 1
+                barriers.add(large);
+                break;
         }
     }
 
     public static void spawnTraps(){
-        int spawnChance = random.nextInt(trapSpawnFrequency * 1000);
+        if(nextTrapSpawnTime > System.currentTimeMillis())return;
 
-        if(spawnChance == 1 || lastTrapSpawnTime + (1000 * trapSpawnFrequency * 1.5) < System.currentTimeMillis()){
+        int randomSpawnTime = random.nextInt(1000*trapMaxSpawnDelay);
+        nextTrapSpawnTime = System.currentTimeMillis() + randomSpawnTime;
 
-            lastTrapSpawnTime = System.currentTimeMillis();
-            int trapType = random.nextInt(2); //random number from 0 to 1;
-            int xPos = random.nextInt(getWidth());
+        int xPos = random.nextInt(getWidth());
+        int trapType = random.nextInt(2); //random number from 0 to 1;
 
-            switch (trapType){
-                case 0:
-                    Trap small = new Trap(new Point(xPos,0),50); // type: 0
-                    traps.add(small);
-                    break;
-                case 1:
-                    Trap large = new Trap(new Point(xPos,0), 100); // type: 1
-                    traps.add(large);
-                    break;
-            }
+        switch (trapType){
+            case 0:
+                Trap small = new Trap(new Point(xPos,0),50); // type: 0
+                traps.add(small);
+                break;
+            case 1:
+                Trap large = new Trap(new Point(xPos,0), 100); // type: 1
+                traps.add(large);
+                break;
         }
     }
 
@@ -169,7 +171,7 @@ public class GameLogic {
 
         for(Segment s: getLeadingSegments()) {
             if(s.getDirection() != 0){
-                Segment newSegment = new Segment(s.getUpper().x, s.getUpper().y, 0);
+                Segment newSegment = new Segment(s.getUpper().x, s.getUpper().y, 0, 0);
                 segmentsToAdd.add(newSegment);
                 s.setLeading(false);
             }
@@ -182,15 +184,15 @@ public class GameLogic {
         ArrayList<Segment> segmentsToAdd = new ArrayList<>();
 
         for(Segment s: getLeadingSegments()){
-
+            int id = getCurrentID();
             if(s.getDirection() != -1){
-                Segment newSegment = new Segment(s.getUpper().x - 2, s.getUpper().y, -1);
+                Segment newSegment = new Segment(s.getUpper().x - 2, s.getUpper().y, -1, id);
                 segmentsToAdd.add(newSegment);
                 Log.d("Segment", "new segment created");
             }
 
             if(s.getDirection() != 1){
-                Segment newSegment = new Segment(s.getUpper().x + 2, s.getUpper().y, 1);
+                Segment newSegment = new Segment(s.getUpper().x + 2, s.getUpper().y, 1, id);
                 segmentsToAdd.add(newSegment);
                 Log.d("Segment", "new segment created");
             }
@@ -278,5 +280,10 @@ public class GameLogic {
 
     public static void setScreenWasPressed(boolean screenWasPressed) {
         GameLogic.screenWasPressed = screenWasPressed;
+    }
+
+    public static int getCurrentID(){
+        currentID++;
+        return currentID;
     }
 }

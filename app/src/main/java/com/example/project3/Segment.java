@@ -13,6 +13,8 @@ public class Segment implements GameObject{
     private int upperY;
     private int lowerX;
     private int lowerY;
+    private long id;
+
     private Path path;
 
     private boolean isLeading = true; //if leading, the upper of the segment doesn't move.
@@ -22,11 +24,12 @@ public class Segment implements GameObject{
                             //1  = upRight
 
 
-    public Segment(int upperX, int upperY, int direction) {
+    public Segment(int upperX, int upperY, int direction, long id) {
         this.upperX = upperX;
         this.upperY = upperY;
         this.lowerX = upperX;
         this.lowerY = upperY + 5;
+        this.id = id;
         this.direction = direction;
         createShape();
     }
@@ -94,6 +97,7 @@ public class Segment implements GameObject{
 
         for(Segment check: GameLogic.getLeadingSegments()){
             if(check == this)continue;
+            if(id == check.getID())continue; //segments with identical id's cant collide.
 
             int checkLeftBound = check.getUpper().x - GameLogic.getSpeed()*2;
             int checkRightBound = check.getUpper().x + GameLogic.getSpeed()*2;
@@ -125,7 +129,7 @@ public class Segment implements GameObject{
 
             int newUpperX = (int) ((upperX + collidedSegment.getUpper().x)*0.5);
 
-            Segment newSegment = new Segment(newUpperX, GameLogic.leadingYPosition, 0);
+            Segment newSegment = new Segment(newUpperX, GameLogic.leadingYPosition, 0, System.currentTimeMillis());
             GameLogic.getNewSegments().add(newSegment);
         }
     }
@@ -153,8 +157,8 @@ public class Segment implements GameObject{
         return direction;
     }
 
-    public Path getPath(){
-        return path;
+    public long getID(){
+        return id;
     }
 
 }
