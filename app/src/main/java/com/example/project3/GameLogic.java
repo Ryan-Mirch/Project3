@@ -22,8 +22,9 @@ public class GameLogic {
 
     private static Random random = new Random();
 
-    private static int ySpeed = 4;
+    private static int ySpeed = 8;
     private static int barrierSpawnFrequency = 4; // 1 every x seconds, on average.
+    private static int trapSpawnFrequency = 3; // 1 every x seconds, on average.
 
     private static boolean gamePlaying = false;
     private static boolean startNewGame = false;
@@ -38,6 +39,7 @@ public class GameLogic {
 
     private static double lastPressTime = 0;
     private static double lastBarrierSpawnTime = 0;
+    private static double lastTrapSpawnTime = 0;
 
     public static int centerXPosition = 0;
     public static int leadingYPosition = 0;
@@ -73,7 +75,8 @@ public class GameLogic {
     }
 
     public static void gameLoop(long frameTime){
-        spawnObjects();
+        spawnBarriers();
+        spawnTraps();
         screenPressed();
         for(Barrier barrier: barriers)barrier.update(frameTime);
         for(Segment segment: segments)segment.update(frameTime);
@@ -118,24 +121,44 @@ public class GameLogic {
 
     }
 
-    public static void spawnObjects(){
-
-        int xPos = random.nextInt(getWidth());
-
-        Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10), false); // type: 0
-        Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10), false); // type: 1
-
-        int barrierType = random.nextInt(2); //random number from 0 to 1;
+    public static void spawnBarriers(){
         int spawnChance = random.nextInt(barrierSpawnFrequency * 1000);
-
         if(spawnChance == 1 || lastBarrierSpawnTime + (1000 * barrierSpawnFrequency * 1.5) < System.currentTimeMillis()){
+
             lastBarrierSpawnTime = System.currentTimeMillis();
+            int xPos = random.nextInt(getWidth());
+            int barrierType = random.nextInt(2); //random number from 0 to 1;
+
             switch (barrierType){
                 case 0:
+                    Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10), false); // type: 0
                     barriers.add(small);
                     break;
                 case 1:
+                    Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10), false); // type: 1
                     barriers.add(large);
+                    break;
+            }
+        }
+    }
+
+    public static void spawnTraps(){
+        int spawnChance = random.nextInt(trapSpawnFrequency * 1000);
+
+        if(spawnChance == 1 || lastTrapSpawnTime + (1000 * trapSpawnFrequency * 1.5) < System.currentTimeMillis()){
+
+            lastTrapSpawnTime = System.currentTimeMillis();
+            int trapType = random.nextInt(2); //random number from 0 to 1;
+            int xPos = random.nextInt(getWidth());
+
+            switch (trapType){
+                case 0:
+                    Trap small = new Trap(new Point(xPos,0),50); // type: 0
+                    traps.add(small);
+                    break;
+                case 1:
+                    Trap large = new Trap(new Point(xPos,0), 100); // type: 1
+                    traps.add(large);
                     break;
             }
         }
@@ -213,6 +236,10 @@ public class GameLogic {
 
     public static List<Barrier> getBarriers(){
         return barriers;
+    }
+
+    public static List<Trap> getTraps(){
+        return traps;
     }
 
     public static ArrayList<Segment> getNewSegments(){

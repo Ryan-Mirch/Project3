@@ -40,6 +40,7 @@ public class Barrier implements GameObject{
         this.isStatic = isStatic;
         region = new Region();
         createShape();
+        Log.d("barrier", "barrier spawned at " + topLeft.toString());
     }
 
     private void move(long frameTime){

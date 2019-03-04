@@ -36,6 +36,7 @@ public class Segment implements GameObject{
         move(frameTime);
         segmentCollisionCheck();
         barrierCollisionCheck();
+        trapCollisionCheck();
         createShape();
     }
 
@@ -70,6 +71,17 @@ public class Segment implements GameObject{
         for(Barrier check: GameLogic.getBarriers()){
             if(check.getRegion().contains(upperX, upperY)){
                 Log.d("segment","segment hit barrier at  x: " + upperX + "  y: " + upperY);
+                isLeading = false;
+            }
+        }
+    }
+
+    private void trapCollisionCheck(){
+        if (!isLeading) return; //only check for collision if it is leading
+
+        for(Trap check: GameLogic.getTraps()){
+            if(check.getRegion().contains(upperX, upperY)){
+                Log.d("segment","segment hit trap at  x: " + upperX + "  y: " + upperY);
                 isLeading = false;
             }
         }

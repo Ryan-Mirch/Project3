@@ -5,33 +5,32 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.Region;
+import android.util.Log;
 
 public class Trap implements GameObject {
 
     private Point center;
-    private Path path;
+    private Rect shape;
     private Region region;
     private int width;
 
     public Trap(Point center, int width) {
         this.center = center;
         this.width = width;
-
-        path = new Path();
-        region = new Region();
-
         createShape();
+        Log.d("trap", "trap spawned at " + center.toString());
     }
 
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.STROKE);
+        paint.setStyle(Paint.Style.FILL);
         paint.setStrokeWidth(GameLogic.SEGMENT_WIDTH);
 
-        canvas.drawPath(path, paint);
+        canvas.drawRect(shape, paint);
     }
 
     @Override
@@ -48,31 +47,13 @@ public class Trap implements GameObject {
     }
 
     private void createShape(){
-        path = new Path();
-        Point current = new Point();
-
-        current.x = center.x - width/2;
-        current.y = center.y - width/2;
-        path.moveTo(current.x, current.y); //top left
-
-        current.x += width/2;
-        path.lineTo(current.x, current.y); //top right
-        path.moveTo(current.x, current.y);
-
-        current.y += width/2;
-        path.lineTo(current.x, current.y); //bottom right
-        path.moveTo(current.x, current.y);
-
-        current.x -= width/2;
-        path.lineTo(current.x, current.y); //bottom right
-        path.moveTo(current.x, current.y);
-
-        path.close();
-
-        region.setPath(path, GameLogic.clip);
+        shape = new Rect(center.x - width/2, center.y - width/2, center.x + width/2, center.y + width/2);
+        region = new Region(shape);
     }
 
     public boolean belowPoint(int y){
         return(center.y - width/2) > y;
     }
+
+    public Region getRegion(){ return region; }
 }
