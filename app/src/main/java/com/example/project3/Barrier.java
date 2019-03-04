@@ -49,7 +49,6 @@ public class Barrier implements GameObject{
         for(Point p: points){
             p.y += pixelsToMove;
         }
-
     }
 
     @Override

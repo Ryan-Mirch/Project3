@@ -6,10 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
-import android.graphics.Region;
 import android.util.Log;
-
-import java.util.ArrayList;
 
 public class Segment implements GameObject{
     private int upperX;

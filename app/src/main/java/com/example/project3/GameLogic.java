@@ -33,6 +33,7 @@ public class GameLogic {
 
     private static List<Segment> segments = Collections.synchronizedList(new ArrayList<Segment>());
     private static List<Barrier> barriers = Collections.synchronizedList(new ArrayList<Barrier>());
+    private static List<Trap> traps = Collections.synchronizedList(new ArrayList<Trap>());
     private static ArrayList<Segment> newSegments = new ArrayList<>();
 
     private static double lastPressTime = 0;
@@ -50,6 +51,7 @@ public class GameLogic {
         nextPress = "divide";
         segments.clear();
         barriers.clear();
+        traps.clear();
 
         centerXPosition = getWidth()/2;
         leadingYPosition = getHeight() - 400;
@@ -75,6 +77,7 @@ public class GameLogic {
         screenPressed();
         for(Barrier barrier: barriers)barrier.update(frameTime);
         for(Segment segment: segments)segment.update(frameTime);
+        for(Trap trap: traps)trap.update(frameTime);
         addNewSegments();
         removeOffscreenObjects();
     }
@@ -179,6 +182,7 @@ public class GameLogic {
     public static void removeOffscreenObjects(){
         ArrayList<Segment> segmentsToRemove = new ArrayList<>();
         ArrayList<Barrier> barriersToRemove = new ArrayList<>();
+        ArrayList<Trap> trapsToRemove = new ArrayList<>();
 
         for(Segment s: segments){
             if(s.getUpper().y > garbageYPosition){
@@ -192,8 +196,15 @@ public class GameLogic {
             }
         }
 
+        for(Trap t: traps){
+            if(t.belowPoint(garbageYPosition)){
+                trapsToRemove.add(t);
+            }
+        }
+
         segments.removeAll(segmentsToRemove);
         barriers.removeAll(barriersToRemove);
+        traps.removeAll(trapsToRemove);
     }
 
     public static List<Segment> getSegments(){
