@@ -15,19 +15,17 @@ import java.util.ArrayList;
 public class Barrier implements GameObject{
     private ArrayList<Point> points;
     private Path path;
-    private boolean isStatic; //if static, the barrier will stay still
     private Region region;
 
 
-    public Barrier(ArrayList<Point> points, boolean isStatic) {
+    public Barrier(ArrayList<Point> points) {
         this.points = points;
-        this.isStatic = isStatic;
         region = new Region();
         createShape();
         Log.d("barrier", path.toString());
     }
 
-    public Barrier(Point topLeft, Point bottomRight, boolean isStatic) {
+    public Barrier(Point topLeft, Point bottomRight) {
         Point topRight = new Point(bottomRight.x, topLeft.y);
         Point bottomLeft = new Point(topLeft.x, bottomRight.y);
 
@@ -37,7 +35,6 @@ public class Barrier implements GameObject{
         points.add(bottomRight);
         points.add(bottomLeft);
 
-        this.isStatic = isStatic;
         region = new Region();
         createShape();
         Log.d("barrier", "barrier spawned at " + topLeft.toString());
@@ -54,7 +51,6 @@ public class Barrier implements GameObject{
 
     @Override
     public void update(long frameTime){
-        if(isStatic)return;
         move(frameTime);
         createShape();
     }

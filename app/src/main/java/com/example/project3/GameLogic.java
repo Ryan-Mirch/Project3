@@ -48,8 +48,6 @@ public class GameLogic {
     public static int leadingYPosition = 0;
     public static int garbageYPosition = 0;
 
-
-
     public static void initializeGame(){
         if(!startNewGame)return;
 
@@ -66,18 +64,15 @@ public class GameLogic {
 
         Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0, 0);
 
-        Barrier permanentLeftBarrier = new Barrier(new Point(100,0), new Point(110, getHeight()),true);
-        Barrier permanentRightBarrier = new Barrier(new Point(getWidth() -110, 0), new Point(getWidth() - 100, getHeight()), true);
-
         segments.add(initialSegment);
-        barriers.add(permanentLeftBarrier);
-        barriers.add(permanentRightBarrier);
+        spawnBorders(true);
 
         gamePlaying = true;
         startNewGame = false;
     }
 
     public static void gameLoop(long frameTime){
+        spawnBorders(false);
         spawnBarriers();
         spawnTraps();
         screenPressed();
@@ -86,6 +81,32 @@ public class GameLogic {
         for(Trap trap: traps)trap.update(frameTime);
         addNewSegments();
         removeOffscreenObjects();
+    }
+
+    private static void spawnBorders(boolean newGame){
+        if(newGame){
+            Point topLeft = new Point(0, 1000);
+            Point bottomRight = new Point(centerXPosition, getHeight());
+            Point bottomLeft = new Point(centerXPosition - 1000, getHeight());
+
+            ArrayList<Point> points = new ArrayList<>();
+            points.add(topLeft);
+            points.add(bottomRight);
+            points.add(bottomLeft);
+
+            barriers.add(new Barrier(points));
+
+             Point topRight = new Point(getWidth(), 1000);
+             bottomRight = new Point(centerXPosition + 1000, getHeight());
+             bottomLeft = new Point(centerXPosition, getHeight());
+
+            points = new ArrayList<>();
+            points.add(topRight);
+            points.add(bottomRight);
+            points.add(bottomLeft);
+
+            barriers.add(new Barrier(points));
+        }
     }
 
     private static void addNewSegments(){
@@ -135,11 +156,11 @@ public class GameLogic {
 
         switch (barrierType){
             case 0:
-                Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10), false); // type: 0
+                Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10)); // type: 0
                 barriers.add(small);
                 break;
             case 1:
-                Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10), false); // type: 1
+                Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10)); // type: 1
                 barriers.add(large);
                 break;
         }
