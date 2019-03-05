@@ -14,20 +14,19 @@ import java.util.ArrayList;
 
 public class Barrier implements GameObject{
     private ArrayList<Point> points;
+    private Point top;
+    private Point bottom;
     private Path path;
     private Region region;
 
+    public Barrier(Point top, Point bottom, int width) {
+        this.top = top;
+        this.bottom = bottom;
 
-    public Barrier(ArrayList<Point> points) {
-        this.points = points;
-        region = new Region();
-        createShape();
-        Log.d("barrier", path.toString());
-    }
-
-    public Barrier(Point topLeft, Point bottomRight) {
-        Point topRight = new Point(bottomRight.x, topLeft.y);
-        Point bottomLeft = new Point(topLeft.x, bottomRight.y);
+        Point topRight = new Point(top.x + width/2, top.y);
+        Point topLeft = new Point(top.x - width/2, top.y);
+        Point bottomRight = new Point(bottom.x + width/2, bottom.y);
+        Point bottomLeft = new Point(bottom.x - width/2, bottom.y);
 
         points = new ArrayList<>();
         points.add(topLeft);
@@ -37,7 +36,7 @@ public class Barrier implements GameObject{
 
         region = new Region();
         createShape();
-        Log.d("barrier", "barrier spawned at " + topLeft.toString());
+        Log.d("barrier", path.toString());
     }
 
     private void move(long frameTime){
@@ -47,6 +46,9 @@ public class Barrier implements GameObject{
         for(Point p: points){
             p.y += pixelsToMove;
         }
+
+        top.y += pixelsToMove;
+        bottom.y += pixelsToMove;
     }
 
     @Override
@@ -59,7 +61,7 @@ public class Barrier implements GameObject{
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.GREEN);
-        paint.setStyle(Paint.Style.STROKE);
+        paint.setStyle(Paint.Style.FILL);
         paint.setStrokeWidth(GameLogic.SEGMENT_WIDTH);
 
         canvas.drawPath(path, paint);
@@ -103,4 +105,33 @@ public class Barrier implements GameObject{
 
     public Region getRegion(){ return region; }
 
+    public Point getTop() {
+        return top;
+    }
+
+    public Point getBottom() {
+        return bottom;
+    }
+
+    //Returns the X where Y = 0.
+    //Returns -1 if the top point is below Y = 0
+    public int getXWhereY0(){
+        int x1 = top.x;
+        int x2 = bottom.x;
+        int y1 = top.y;
+        int y2 = bottom.y;
+
+        if(y1 >= 0) return -1;
+
+        if(x1 == x2) return x1;
+
+
+        int dx = x2-x1;
+        int dy = y2-y1;
+        double m = dy/dx;
+        double b = y1 - m*x1;
+        double xAtY0 = -b/m;
+
+        return (int) xAtY0;
+    }
 }

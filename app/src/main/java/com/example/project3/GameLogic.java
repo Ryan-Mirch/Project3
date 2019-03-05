@@ -22,6 +22,8 @@ public class GameLogic {
 
     private static Random random = new Random();
 
+    private static BorderManager borderManager;
+
     private static int ySpeed = 8;
     private static int barrierMaxSpawnDelay = 7; // 1 every x seconds at least.
     private static int trapMaxSpawnDelay = 5; // 1 every x seconds, at least.
@@ -50,6 +52,7 @@ public class GameLogic {
 
     public static void initializeGame(){
         if(!startNewGame)return;
+        borderManager = new BorderManager(getWidth(), getHeight());
 
         nextPress = "divide";
         segments.clear();
@@ -65,48 +68,23 @@ public class GameLogic {
         Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0, 0);
 
         segments.add(initialSegment);
-        spawnBorders(true);
+        borderManager.createNewGameBorders();
+        borderManager.manageBorders();
 
         gamePlaying = true;
         startNewGame = false;
     }
 
     public static void gameLoop(long frameTime){
-        spawnBorders(false);
         spawnBarriers();
         spawnTraps();
         screenPressed();
+        borderManager.manageBorders();
         for(Barrier barrier: barriers)barrier.update(frameTime);
         for(Segment segment: segments)segment.update(frameTime);
         for(Trap trap: traps)trap.update(frameTime);
         addNewSegments();
         removeOffscreenObjects();
-    }
-
-    private static void spawnBorders(boolean newGame){
-        if(newGame){
-            Point topLeft = new Point(0, 1000);
-            Point bottomRight = new Point(centerXPosition, getHeight());
-            Point bottomLeft = new Point(centerXPosition - 1000, getHeight());
-
-            ArrayList<Point> points = new ArrayList<>();
-            points.add(topLeft);
-            points.add(bottomRight);
-            points.add(bottomLeft);
-
-            barriers.add(new Barrier(points));
-
-             Point topRight = new Point(getWidth(), 1000);
-             bottomRight = new Point(centerXPosition + 1000, getHeight());
-             bottomLeft = new Point(centerXPosition, getHeight());
-
-            points = new ArrayList<>();
-            points.add(topRight);
-            points.add(bottomRight);
-            points.add(bottomLeft);
-
-            barriers.add(new Barrier(points));
-        }
     }
 
     private static void addNewSegments(){
@@ -151,16 +129,17 @@ public class GameLogic {
         int randomSpawnTime = random.nextInt(1000*barrierMaxSpawnDelay);
         nextBarrierSpawnTime = System.currentTimeMillis() + randomSpawnTime;
 
-        int xPos = random.nextInt(getWidth());
+        int boundaryWidth = borderManager.getCurrentRightBorderX() - borderManager.getCurrentLeftBorderX();
+        int xPos = random.nextInt(boundaryWidth) + borderManager.getCurrentLeftBorderX();
         int barrierType = random.nextInt(2); //random number from 0 to 1;
 
         switch (barrierType){
             case 0:
-                Barrier small = new Barrier(new Point(0 + xPos,0), new Point(50 + xPos,10)); // type: 0
+                Barrier small = new Barrier(new Point(xPos,0), new Point(xPos,20), 50); // type: 0
                 barriers.add(small);
                 break;
             case 1:
-                Barrier large = new Barrier(new Point(0 + xPos,0), new Point(100 + xPos,10)); // type: 1
+                Barrier large = new Barrier(new Point(xPos,0), new Point(xPos,20), 100); // type: 1
                 barriers.add(large);
                 break;
         }
@@ -172,7 +151,8 @@ public class GameLogic {
         int randomSpawnTime = random.nextInt(1000*trapMaxSpawnDelay);
         nextTrapSpawnTime = System.currentTimeMillis() + randomSpawnTime;
 
-        int xPos = random.nextInt(getWidth());
+        int boundaryWidth = borderManager.getCurrentRightBorderX() - borderManager.getCurrentLeftBorderX();
+        int xPos = random.nextInt(boundaryWidth) + borderManager.getCurrentLeftBorderX();
         int trapType = random.nextInt(2); //random number from 0 to 1;
 
         switch (trapType){
