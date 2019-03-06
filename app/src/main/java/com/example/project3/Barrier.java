@@ -36,7 +36,6 @@ public class Barrier implements GameObject{
 
         region = new Region();
         createShape();
-        Log.d("barrier", path.toString());
     }
 
     private void move(long frameTime){

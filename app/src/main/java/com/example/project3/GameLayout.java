@@ -75,8 +75,8 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
 
         canvas.drawColor(Color.BLACK);
 
-        for(Barrier barrier: GameLogic.getBarriers())barrier.draw(canvas);
         for(Segment segment: GameLogic.getSegments())segment.draw(canvas);
         for(Trap trap: GameLogic.getTraps())trap.draw(canvas);
+        for(Barrier barrier: GameLogic.getBarriers())barrier.draw(canvas);
     }
 }

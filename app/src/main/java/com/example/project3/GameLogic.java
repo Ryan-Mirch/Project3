@@ -26,7 +26,7 @@ public class GameLogic {
 
     private static int ySpeed = 5;
     private static int barrierMaxSpawnDelay = 7; // 1 every x seconds at least.
-    private static int trapMaxSpawnDelay = 5; // 1 every x seconds, at least.
+    private static int trapMaxSpawnDelay = 4; // 1 every x seconds, at least.
 
     private static int currentID = 0;
 
@@ -130,19 +130,11 @@ public class GameLogic {
         nextBarrierSpawnTime = System.currentTimeMillis() + randomSpawnTime;
 
         int boundaryWidth = borderManager.getCurrentRightBorderX() - borderManager.getCurrentLeftBorderX();
-        int xPos = random.nextInt(boundaryWidth) + borderManager.getCurrentLeftBorderX();
-        int barrierType = random.nextInt(2); //random number from 0 to 1;
+        int width = random.nextInt(60) + 50;
+        int xPos = random.nextInt(boundaryWidth - width) + borderManager.getCurrentLeftBorderX() + width/2;
 
-        switch (barrierType){
-            case 0:
-                Barrier small = new Barrier(new Point(xPos,0), new Point(xPos,20), 50); // type: 0
-                barriers.add(small);
-                break;
-            case 1:
-                Barrier large = new Barrier(new Point(xPos,0), new Point(xPos,20), 100); // type: 1
-                barriers.add(large);
-                break;
-        }
+        Barrier newBarrier = new Barrier(new Point(xPos,0), new Point(xPos,20), width); // type: 0
+        barriers.add(newBarrier);
     }
 
     public static void spawnTraps(){
@@ -152,19 +144,11 @@ public class GameLogic {
         nextTrapSpawnTime = System.currentTimeMillis() + randomSpawnTime;
 
         int boundaryWidth = borderManager.getCurrentRightBorderX() - borderManager.getCurrentLeftBorderX();
-        int xPos = random.nextInt(boundaryWidth) + borderManager.getCurrentLeftBorderX();
-        int trapType = random.nextInt(2); //random number from 0 to 1;
+        int width = random.nextInt(60) + 20;
+        int xPos = random.nextInt(boundaryWidth - width) + borderManager.getCurrentLeftBorderX() + width/2;
 
-        switch (trapType){
-            case 0:
-                Trap small = new Trap(new Point(xPos,0),50); // type: 0
-                traps.add(small);
-                break;
-            case 1:
-                Trap large = new Trap(new Point(xPos,0), 100); // type: 1
-                traps.add(large);
-                break;
-        }
+        Trap newTrap = new Trap(new Point(xPos,0),width);
+        traps.add(newTrap);
     }
 
     private static void straightenSegments(){
