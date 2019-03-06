@@ -11,6 +11,7 @@ import android.graphics.Region;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class BorderManager{
     private int screenWidth;
@@ -18,6 +19,8 @@ public class BorderManager{
     private int screenCenter;
 
     private int segWidth;
+
+    private Random random = new Random();
 
     private int X1;//   |1 2 3 4  center  5 6 7 8|
     private int X2;
@@ -27,6 +30,10 @@ public class BorderManager{
     private int X6;
     private int X7;
     private int X8;
+
+    private ArrayList<Integer> leftXs = new ArrayList<>();
+    private ArrayList<Integer> rightXs = new ArrayList<>();
+
     private int currentLeftBorderX;
     private int currentRightBorderX;
     private int nextLeftX;
@@ -39,15 +46,17 @@ public class BorderManager{
         this.screenHeight = screenHeight;
         segWidth = GameLogic.SEGMENT_WIDTH;
         screenCenter = screenWidth/2;
-        X1 = 0;
-        X2 = X1 + screenWidth/10;
-        X3 = X2 + screenWidth/10;
-        X4 = X3 + screenWidth/10;
+        X1 = 0;                   leftXs.add(X1);
+        X2 = X1 + screenWidth/10; leftXs.add(X2);
+        X3 = X2 + screenWidth/10; leftXs.add(X3);
+        X4 = X3 + screenWidth/10; leftXs.add(X4);
 
-        X8 = screenWidth;
-        X7 = X8 - screenWidth/10;
-        X6 = X7 - screenWidth/10;
-        X5 = X6 - screenWidth/10;
+
+
+        X8 = screenWidth;         rightXs.add(X8);
+        X7 = X8 - screenWidth/10; rightXs.add(X7);
+        X6 = X7 - screenWidth/10; rightXs.add(X6);
+        X5 = X6 - screenWidth/10; rightXs.add(X5);
     }
 
     public void createNewGameBorders(){
@@ -96,13 +105,15 @@ public class BorderManager{
     }
 
     private Barrier newLeftBorder(){
-        Barrier leftVertical = new Barrier(new Point(nextLeftX, -screenHeight), new Point(nextLeftX, currentLeftBorder.getTop().y), 20);
-        return leftVertical;
+        int xIndex = random.nextInt(leftXs.size());
+        Barrier newBarrier = new Barrier(new Point(leftXs.get(xIndex), -screenHeight/2), new Point(nextLeftX, currentLeftBorder.getTop().y), 20);
+        return newBarrier;
     }
 
     private Barrier newRightBorder(){
-        Barrier rightVertical = new Barrier(new Point(nextRightX, -screenHeight), new Point(nextRightX, currentRightBorder.getTop().y), 20);
-        return rightVertical;
+        int xIndex = random.nextInt(rightXs.size());
+        Barrier newBarrier = new Barrier(new Point(rightXs.get(xIndex), -screenHeight/2), new Point(nextRightX, currentRightBorder.getTop().y), 20);
+        return newBarrier;
     }
 
     public int getCurrentLeftBorderX() {
