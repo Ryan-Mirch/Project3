@@ -1,13 +1,15 @@
-package com.example.Divide;
+package com.example.Divide.HowToPlay;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class CreditsActivity extends AppCompatActivity {
+import com.example.Divide.R;
+
+public class HowToPlayActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_credits);
+        setContentView(R.layout.activity_howtoplay);
     }
 }

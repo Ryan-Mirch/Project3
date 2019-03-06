@@ -1,9 +1,14 @@
-package com.example.Divide;
+package com.example.Divide.Game;
 
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.Region;
 import android.util.Log;
+
+import com.example.Divide.Game.GameObjects.Barrier;
+import com.example.Divide.Game.GameObjects.Pickup;
+import com.example.Divide.Game.GameObjects.Segment;
+import com.example.Divide.Game.GameObjects.Trap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +18,7 @@ import java.util.Random;
 public class GameLogic {
     public static final int SPLIT_INTERVAL = 100;  //in milliseconds
     public static final int SEGMENT_WIDTH = 20;
+    public static final int SCORE_UPDATE_INTERVAL = 100; //in milliseconds
 
     public static Region clip = new Region();
 
@@ -20,9 +26,13 @@ public class GameLogic {
 
     private static BorderManager borderManager;
 
+    private static int score;
+    private static int lives;
+
     private static int ySpeed = 5;
     private static int barrierMaxSpawnDelay = 7; // 1 every x seconds at least.
     private static int trapMaxSpawnDelay = 4; // 1 every x seconds, at least.
+    private static int pickupMaxSpawnDelay = 4; // 1 every x seconds, at least.
 
     private static int currentID = 0;
 
@@ -31,16 +41,18 @@ public class GameLogic {
     private static boolean screenWasPressed = false;
     private static String nextPress = "divide"; //either 'divide' or 'straighten
 
-
     private static List<Segment> segments = Collections.synchronizedList(new ArrayList<Segment>());
     private static List<Barrier> barriers = Collections.synchronizedList(new ArrayList<Barrier>());
     private static List<Trap> traps = Collections.synchronizedList(new ArrayList<Trap>());
+    private static List<Pickup> pickups = Collections.synchronizedList(new ArrayList<Pickup>());
     private static ArrayList<Segment> newSegments = new ArrayList<>();
 
+    private static double lastScoreUpdate = 0;
     private static double lastPressTime = 0;
 
     private static double nextBarrierSpawnTime = 0;
     private static double nextTrapSpawnTime = 0;
+    private static double nextPickupSpawnTime = 0;
 
     public static int centerXPosition = 0;
     public static int leadingYPosition = 0;
@@ -48,18 +60,22 @@ public class GameLogic {
 
     public static void initializeGame(){
         if(!startNewGame)return;
+
         borderManager = new BorderManager(getWidth(), getHeight());
 
+        lives = 3;
+        score = 0;
         nextPress = "divide";
+
         segments.clear();
         barriers.clear();
         traps.clear();
+        pickups.clear();
 
         centerXPosition = getWidth()/2;
         leadingYPosition = getHeight() - 400;
         garbageYPosition = getHeight() + 50;
         clip.set(0,0, getWidth(), getHeight());
-
 
         Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0, 0);
 
@@ -74,18 +90,29 @@ public class GameLogic {
     public static void gameLoop(long frameTime){
         spawnBarriers();
         spawnTraps();
+        spawnPickups();
         screenPressed();
         borderManager.manageBorders();
         for(Barrier barrier: barriers)barrier.update(frameTime);
         for(Segment segment: segments)segment.update(frameTime);
         for(Trap trap: traps)trap.update(frameTime);
+        for(Pickup pickup: pickups)pickup.update(frameTime);
         addNewSegments();
         removeOffscreenObjects();
+        updateScore();
     }
 
     private static void addNewSegments(){
         segments.addAll(newSegments);
         newSegments.clear();
+    }
+
+    private static void updateScore(){
+        if(lastScoreUpdate + SCORE_UPDATE_INTERVAL > System.currentTimeMillis())return;
+        lastScoreUpdate = System.currentTimeMillis();
+
+        int scoreIncrease = getLeadingSegments().size() * 10;
+        increaseScore(scoreIncrease);
     }
 
     public static void screenPressed(){
@@ -147,6 +174,20 @@ public class GameLogic {
         traps.add(newTrap);
     }
 
+    public static void spawnPickups(){
+        if(nextPickupSpawnTime > System.currentTimeMillis())return;
+
+        int randomSpawnTime = random.nextInt(1000*pickupMaxSpawnDelay);
+        nextPickupSpawnTime = System.currentTimeMillis() + randomSpawnTime;
+
+        int boundaryWidth = borderManager.getCurrentRightBorderX() - borderManager.getCurrentLeftBorderX();
+        int width = 20;
+        int xPos = random.nextInt(boundaryWidth - width) + borderManager.getCurrentLeftBorderX() + width/2;
+
+        Pickup newPickup = new Pickup(new Point(xPos,0),10,"score");
+        pickups.add(newPickup);
+    }
+
     private static void straightenSegments(){
         ArrayList<Segment> segmentsToAdd = new ArrayList<>();
 
@@ -189,6 +230,7 @@ public class GameLogic {
         ArrayList<Segment> segmentsToRemove = new ArrayList<>();
         ArrayList<Barrier> barriersToRemove = new ArrayList<>();
         ArrayList<Trap> trapsToRemove = new ArrayList<>();
+        ArrayList<Pickup> pickupsToRemove = new ArrayList<>();
 
         for(Segment s: segments){
             if(s.getUpper().y > garbageYPosition){
@@ -208,9 +250,16 @@ public class GameLogic {
             }
         }
 
+        for(Pickup p: pickups){
+            if(p.belowPoint(garbageYPosition) || p.isPickedUp()){
+                pickupsToRemove.add(p);
+            }
+        }
+
         segments.removeAll(segmentsToRemove);
         barriers.removeAll(barriersToRemove);
         traps.removeAll(trapsToRemove);
+        pickups.removeAll(pickupsToRemove);
     }
 
     public static List<Segment> getSegments(){
@@ -223,6 +272,10 @@ public class GameLogic {
 
     public static List<Trap> getTraps(){
         return traps;
+    }
+
+    public static List<Pickup> getPickups(){
+        return pickups;
     }
 
     public static ArrayList<Segment> getNewSegments(){
@@ -266,5 +319,13 @@ public class GameLogic {
     public static int getCurrentID(){
         currentID++;
         return currentID;
+    }
+
+    public static void increaseScore(int increase){
+        score += increase;
+    }
+
+    public static int getScore(){
+        return score;
     }
 }

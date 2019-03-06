@@ -1,4 +1,4 @@
-package com.example.Divide;
+package com.example.Divide.Game;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,6 +6,11 @@ import android.graphics.Color;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.example.Divide.Game.GameObjects.Barrier;
+import com.example.Divide.Game.GameObjects.Pickup;
+import com.example.Divide.Game.GameObjects.Segment;
+import com.example.Divide.Game.GameObjects.Trap;
 
 public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
 
@@ -16,19 +21,6 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
-
-        /*
-        setBackgroundColor(Color.BLACK);
-
-        white_paintbrush_stroke = new Paint();
-        white_paintbrush_stroke.setColor(Color.WHITE);
-        white_paintbrush_stroke.setStyle(Paint.Style.STROKE);
-        white_paintbrush_stroke.setStrokeWidth(5);
-
-        red_paintbrush_fill = new Paint();
-        red_paintbrush_fill.setColor(Color.RED);
-        red_paintbrush_fill.setStyle(Paint.Style.FILL);
-        */
     }
 
     @Override
@@ -77,5 +69,6 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
         for(Segment segment: GameLogic.getSegments())segment.draw(canvas);
         for(Trap trap: GameLogic.getTraps())trap.draw(canvas);
         for(Barrier barrier: GameLogic.getBarriers())barrier.draw(canvas);
+        for(Pickup pickup: GameLogic.getPickups())pickup.draw(canvas);
     }
 }

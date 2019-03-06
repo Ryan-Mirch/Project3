@@ -1,8 +1,11 @@
-package com.example.Divide;
+package com.example.Divide.Game;
 
 
 import android.graphics.Point;
 import android.util.Log;
+
+import com.example.Divide.Game.GameLogic;
+import com.example.Divide.Game.GameObjects.Barrier;
 
 import java.util.ArrayList;
 import java.util.Random;

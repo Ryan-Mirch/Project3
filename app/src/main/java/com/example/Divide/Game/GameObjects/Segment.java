@@ -1,4 +1,4 @@
-package com.example.Divide;
+package com.example.Divide.Game.GameObjects;
 
 
 import android.graphics.Canvas;
@@ -7,6 +7,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.util.Log;
+
+import com.example.Divide.Game.GameLogic;
+import com.example.Divide.Game.MainThread;
 
 public class Segment implements GameObject{
     private int upperX;
@@ -40,6 +43,7 @@ public class Segment implements GameObject{
         segmentCollisionCheck();
         barrierCollisionCheck();
         trapCollisionCheck();
+        pickupCollisionCheck();
         createShape();
     }
 
@@ -55,7 +59,7 @@ public class Segment implements GameObject{
 
     private void move(long frameTime){
         int speed = GameLogic.getSpeed();
-        int pixelsToMove = (int) (speed * (frameTime/(1000/MainThread.MAX_FPS)));
+        int pixelsToMove = (int) (speed * (frameTime/(1000/ MainThread.MAX_FPS)));
 
         lowerY += pixelsToMove;
 
@@ -68,12 +72,26 @@ public class Segment implements GameObject{
         }
     }
 
+    private void pickupCollisionCheck(){
+        if (!isLeading) return; //only check for collision if it is leading
+
+        for(Pickup check: GameLogic.getPickups()){
+
+            if(     check.getRegion().contains(upperX - GameLogic.SEGMENT_WIDTH/2, upperY) ||
+                    check.getRegion().contains(upperX + GameLogic.SEGMENT_WIDTH/2, upperY)){
+
+                Log.d("segment","Pickup hit at  x: " + upperX + "  y: " + upperY);
+                check.pickedUp();
+            }
+        }
+    }
+
     private void barrierCollisionCheck(){
         if (!isLeading) return; //only check for collision if it is leading
 
         for(Barrier check: GameLogic.getBarriers()){
             if(check.getRegion().contains(upperX, upperY)){
-                Log.d("segment","segment hit barrier at  x: " + upperX + "  y: " + upperY);
+                Log.d("segment","Barrier hit at  x: " + upperX + "  y: " + upperY);
                 isLeading = false;
             }
         }
@@ -84,7 +102,7 @@ public class Segment implements GameObject{
 
         for(Trap check: GameLogic.getTraps()){
             if(check.getRegion().contains(upperX, upperY)){
-                Log.d("segment","segment hit trap at  x: " + upperX + "  y: " + upperY);
+                Log.d("segment","Trap hit at  x: " + upperX + "  y: " + upperY);
                 isLeading = false;
             }
         }

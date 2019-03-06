@@ -1,4 +1,4 @@
-package com.example.Divide;
+package com.example.Divide.Game.GameObjects;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,6 +7,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.util.Log;
+
+import com.example.Divide.Game.GameLogic;
+import com.example.Divide.Game.MainThread;
 
 public class Trap implements GameObject {
 
@@ -40,7 +43,7 @@ public class Trap implements GameObject {
 
     private void move(long frameTime){
         int speed = GameLogic.getSpeed();
-        int pixelsToMove = (int) (speed * (frameTime/(1000/MainThread.MAX_FPS)));
+        int pixelsToMove = (int) (speed * (frameTime/(1000/ MainThread.MAX_FPS)));
 
         center.y += pixelsToMove;
     }

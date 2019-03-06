@@ -1,4 +1,4 @@
-package com.example.Divide;
+package com.example.Divide.Game;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

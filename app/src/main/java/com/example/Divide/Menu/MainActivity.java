@@ -1,10 +1,16 @@
-package com.example.Divide;
+package com.example.Divide.Menu;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.Divide.Credits.CreditsActivity;
+import com.example.Divide.Game.GameActivity;
+import com.example.Divide.Game.GameLogic;
+import com.example.Divide.HowToPlay.HowToPlayActivity;
+import com.example.Divide.R;
 
 public class MainActivity extends AppCompatActivity {
     private Button button_howToPlay;

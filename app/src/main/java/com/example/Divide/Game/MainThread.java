@@ -1,8 +1,11 @@
-package com.example.Divide;
+package com.example.Divide.Game;
 
 import android.graphics.Canvas;
 import android.util.Log;
 import android.view.SurfaceHolder;
+
+import com.example.Divide.Game.GameLayout;
+import com.example.Divide.Game.GameLogic;
 
 public class MainThread extends Thread{
     public static final int MAX_FPS = 30;

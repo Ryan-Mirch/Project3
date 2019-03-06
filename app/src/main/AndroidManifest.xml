@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.Divide.CreditsActivity"></activity>
-        <activity android:name="com.example.Divide.HowToPlayActivity" />
-        <activity android:name="com.example.Divide.GameActivity" />
-        <activity android:name="com.example.Divide.MainActivity">
+        <activity android:name="com.example.Divide.Credits.CreditsActivity"></activity>
+        <activity android:name="com.example.Divide.HowToPlay.HowToPlayActivity" />
+        <activity android:name="com.example.Divide.Game.GameActivity" />
+        <activity android:name="com.example.Divide.Menu.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

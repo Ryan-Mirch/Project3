@@ -1,4 +1,4 @@
-package com.example.Divide;
+package com.example.Divide.Game.GameObjects;
 
 
 import android.graphics.Canvas;
@@ -7,6 +7,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Region;
+
+import com.example.Divide.Game.GameLogic;
+import com.example.Divide.Game.MainThread;
 
 import java.util.ArrayList;
 
@@ -38,7 +41,7 @@ public class Barrier implements GameObject{
 
     private void move(long frameTime){
         int speed = GameLogic.getSpeed();
-        int pixelsToMove = (int) (speed * (frameTime/(1000/MainThread.MAX_FPS)));
+        int pixelsToMove = (int) (speed * (frameTime/(1000/ MainThread.MAX_FPS)));
 
         for(Point p: points){
             p.y += pixelsToMove;

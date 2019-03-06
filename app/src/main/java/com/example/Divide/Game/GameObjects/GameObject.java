@@ -1,4 +1,4 @@
-package com.example.Divide;
+package com.example.Divide.Game.GameObjects;
 
 import android.graphics.Canvas;
 
