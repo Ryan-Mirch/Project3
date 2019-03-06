@@ -24,7 +24,7 @@ public class GameLogic {
 
     private static BorderManager borderManager;
 
-    private static int ySpeed = 8;
+    private static int ySpeed = 5;
     private static int barrierMaxSpawnDelay = 7; // 1 every x seconds at least.
     private static int trapMaxSpawnDelay = 5; // 1 every x seconds, at least.
 
