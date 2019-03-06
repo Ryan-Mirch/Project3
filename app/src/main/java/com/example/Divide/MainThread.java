@@ -1,9 +1,8 @@
-package com.example.project3;
+package com.example.Divide;
 
 import android.graphics.Canvas;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 
 public class MainThread extends Thread{
     public static final int MAX_FPS = 30;

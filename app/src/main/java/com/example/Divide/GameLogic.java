@@ -1,14 +1,10 @@
-package com.example.project3;
+package com.example.Divide;
 
 import android.content.res.Resources;
-import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Region;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

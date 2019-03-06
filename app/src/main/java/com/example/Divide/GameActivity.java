@@ -1,9 +1,7 @@
-package com.example.project3;
+package com.example.Divide;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
 
 public class GameActivity extends AppCompatActivity {
 

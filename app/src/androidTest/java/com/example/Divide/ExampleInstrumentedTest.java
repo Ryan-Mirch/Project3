@@ -1,4 +1,4 @@
-package com.example.project3;
+package com.example.Divide;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

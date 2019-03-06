@@ -1,4 +1,4 @@
-package com.example.project3;
+package com.example.Divide;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

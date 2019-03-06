@@ -1,9 +1,8 @@
-package com.example.project3;
+package com.example.Divide;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Region;
