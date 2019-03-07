@@ -36,6 +36,7 @@ public class GameLogic {
 
     private static int currentID = 0;
 
+    private static boolean scorePickupGrabbed = false;
     private static boolean gamePlaying = false;
     private static boolean startNewGame = false;
     private static boolean screenWasPressed = false;
@@ -49,6 +50,7 @@ public class GameLogic {
 
     private static double lastScoreUpdate = 0;
     private static double lastPressTime = 0;
+    private static double lastScorePickupTime = 0;
 
     private static double nextBarrierSpawnTime = 0;
     private static double nextTrapSpawnTime = 0;
@@ -108,11 +110,19 @@ public class GameLogic {
     }
 
     private static void updateScore(){
-        if(lastScoreUpdate + SCORE_UPDATE_INTERVAL > System.currentTimeMillis())return;
-        lastScoreUpdate = System.currentTimeMillis();
+        if(lastScoreUpdate + SCORE_UPDATE_INTERVAL <= System.currentTimeMillis()){
+            lastScoreUpdate = System.currentTimeMillis();
+            int scoreIncrease = getLeadingSegments().size() * 10;
+            score += scoreIncrease;
+        }
 
-        int scoreIncrease = getLeadingSegments().size() * 10;
-        increaseScore(scoreIncrease);
+
+        if(lastScorePickupTime + 8 <= System.currentTimeMillis() && scorePickupGrabbed){
+            scorePickupGrabbed = false;
+        }
+
+
+
     }
 
     public static void screenPressed(){
@@ -322,10 +332,16 @@ public class GameLogic {
     }
 
     public static void increaseScore(int increase){
+        scorePickupGrabbed = true;
+        lastScorePickupTime = System.currentTimeMillis();
         score += increase;
     }
 
     public static int getScore(){
         return score;
+    }
+
+    public static boolean getScorePickupGrabbed(){
+        return scorePickupGrabbed;
     }
 }

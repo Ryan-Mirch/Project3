@@ -131,9 +131,6 @@ public class Barrier implements GameObject{
         double b = y1 - (m*x1);
         double xAtY0 = (-1 * b)/m;
 
-        Log.d("border", "x1: " + x1 + " | x2: " + x2 + " | y1: " + y1 + " | y2: " + y2);
-        Log.d("border", "m: " + m + " | b: " + b + " | xAtY0: " + xAtY0);
-
         return (int) xAtY0;
     }
 }

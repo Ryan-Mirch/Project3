@@ -12,7 +12,7 @@ import com.example.Divide.Game.MainThread;
 
 public class Pickup implements GameObject {
 
-    private static final int SCORE_INCREASE = 50;
+    private static final int SCORE_INCREASE = 500;
 
     private String type;
     private int radius;
