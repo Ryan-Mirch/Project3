@@ -117,7 +117,7 @@ public class GameLogic {
         }
 
 
-        if(lastScorePickupTime + 8 <= System.currentTimeMillis() && scorePickupGrabbed){
+        if(lastScorePickupTime + 7 <= System.currentTimeMillis() && scorePickupGrabbed){
             scorePickupGrabbed = false;
         }
 
