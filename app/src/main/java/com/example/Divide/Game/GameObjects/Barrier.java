@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Region;
+import android.util.Log;
 
 import com.example.Divide.Game.GameLogic;
 import com.example.Divide.Game.MainThread;
@@ -122,15 +123,16 @@ public class Barrier implements GameObject{
         int y2 = bottom.y;
 
         if(y1 >= 0) return -1;
-
         if(x1 == x2) return x1;
-
 
         int dx = x2-x1;
         int dy = y2-y1;
         double m = dy/dx;
-        double b = y1 - m*x1;
-        double xAtY0 = -b/m;
+        double b = y1 - (m*x1);
+        double xAtY0 = (-1 * b)/m;
+
+        Log.d("border", "x1: " + x1 + " | x2: " + x2 + " | y1: " + y1 + " | y2: " + y2);
+        Log.d("border", "m: " + m + " | b: " + b + " | xAtY0: " + xAtY0);
 
         return (int) xAtY0;
     }
