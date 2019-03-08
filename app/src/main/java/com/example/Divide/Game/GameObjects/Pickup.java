@@ -31,11 +31,13 @@ public class Pickup implements GameObject {
 
     @Override
     public void draw(Canvas canvas){
-        Paint paint = new Paint();
-        paint.setColor(Color.YELLOW);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(7);
-        canvas.drawCircle(center.x, center.y, radius, paint);
+        if(type.equals("score")){
+            Paint paint = new Paint();
+            paint.setColor(Color.YELLOW);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(7);
+            canvas.drawCircle(center.x, center.y, radius, paint);
+        }
     }
 
     @Override

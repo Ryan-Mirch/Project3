@@ -103,6 +103,7 @@ public class Segment implements GameObject{
         for(Trap check: GameLogic.getTraps()){
             if(check.getRegion().contains(upperX, upperY)){
                 Log.d("segment","Trap hit at  x: " + upperX + "  y: " + upperY);
+                GameLogic.decreaseLives();
                 isLeading = false;
             }
         }

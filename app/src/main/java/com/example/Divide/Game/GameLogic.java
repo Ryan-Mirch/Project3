@@ -80,8 +80,13 @@ public class GameLogic {
         clip.set(0,0, getWidth(), getHeight());
 
         Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0, 0);
+        Trap initialTrap = new Trap(new Point(getWidth()/2, getHeight()/2 - 80), 50);
+        Pickup initialPickup = new Pickup(new Point(getWidth()/2, getHeight()/2), 10, "score");
 
         segments.add(initialSegment);
+        traps.add(initialTrap);
+        pickups.add(initialPickup);
+
         borderManager.createNewGameBorders();
         borderManager.manageBorders();
 
@@ -340,6 +345,12 @@ public class GameLogic {
     public static int getScore(){
         return score;
     }
+
+    public static int getLives(){return lives;}
+
+    public static void increaseLives(){lives++;}
+
+    public static void decreaseLives(){lives--;}
 
     public static boolean getScorePickupGrabbed(){
         return scorePickupGrabbed;

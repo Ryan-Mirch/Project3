@@ -78,10 +78,20 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     private void drawGameInfo(Canvas canvas){
+        drawScore(canvas);
+        drawLives(canvas);
+    }
+
+    private void drawScore(Canvas canvas){
         updateScoreTextSize();
         canvas.drawRect(0,0, canvas.getWidth(), 100, paint("black fill"));
         canvas.drawRect(0,100, canvas.getWidth(), 120, paint("green fill"));
-        canvas.drawText(Integer.toString(GameLogic.getScore()), 15, 70, paint("score text") );
+        canvas.drawText(Integer.toString(GameLogic.getScore()), (float) (canvas.getWidth() * 0.04), 70, paint("score text") );
+    }
+
+    private void drawLives(Canvas canvas){
+        canvas.drawText("Lives: " + Integer.toString(GameLogic.getLives()),(float) (canvas.getWidth() * 0.75), 70, paint("lives text"));
+
     }
 
     private Paint paint(String type){
@@ -105,6 +115,15 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(5);
             paint.setTextSize(scoreTextSize);
+            return paint;
+        }
+
+        if(type.equals("lives text")){
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(5);
+            paint.setTextSize(70);
             return paint;
         }
 
