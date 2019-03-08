@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -57,7 +59,10 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
     public boolean onTouchEvent(MotionEvent event){
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                GameLogic.setScreenWasPressed(true);
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                GameLogic.setScreenWasPressed(new Point(x,y));
+                Log.d("screen", "screen was pressed");
                 break;
         }
         return true;
@@ -74,8 +79,17 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
         for(Barrier barrier: GameLogic.getBarriers())barrier.draw(canvas);
         for(Pickup pickup: GameLogic.getPickups())pickup.draw(canvas);
 
-        drawScore(canvas);
-        drawLives(canvas);
+        if(!GameLogic.getGameOver())drawScore(canvas);
+        if(!GameLogic.getGameOver())drawLives(canvas);
+        if(GameLogic.getGameOver())drawGameOverMenu(canvas);
+    }
+
+    private void drawGameOverMenu(Canvas canvas){
+        canvas.drawRect(100,100, canvas.getWidth() - 100, canvas.getHeight() - 100, paint("green fill"));
+        canvas.drawRect(110,110, canvas.getWidth()-110, canvas.getHeight() - 110, paint("black fill"));
+        canvas.drawText("Game Over",(float) (canvas.getWidth()*0.3), 200, paint("white text"));
+        canvas.drawText("Press screen to try again", (float) (canvas.getWidth()*0.15), 500, paint("white text"));
+
     }
 
     private void drawScore(Canvas canvas){
@@ -86,11 +100,8 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     private void drawLives(Canvas canvas){
-        canvas.drawText("Lives: " + Integer.toString(GameLogic.getLives()),(float) (canvas.getWidth() * 0.75), 70, paint("lives text"));
-
+        canvas.drawText("Lives: " + Integer.toString(GameLogic.getLives()),(float) (canvas.getWidth() * 0.75), 70, paint("white text"));
     }
-
-
 
     private Paint paint(String type){
         if(type.equals("black fill")){
@@ -100,14 +111,14 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
             return paint;
         }
 
-        if(type.equals("green fill")){
+        else if(type.equals("green fill")){
             Paint paint = new Paint();
             paint.setColor(Color.GREEN);
             paint.setStyle(Paint.Style.FILL);
             return paint;
         }
 
-        if(type.equals("score text")){
+        else if(type.equals("score text")){
             Paint paint = new Paint();
             paint.setColor(Color.WHITE);
             paint.setStyle(Paint.Style.STROKE);
@@ -116,7 +127,7 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
             return paint;
         }
 
-        if(type.equals("lives text")){
+        else if(type.equals("white text")){
             Paint paint = new Paint();
             paint.setColor(Color.WHITE);
             paint.setStyle(Paint.Style.STROKE);
@@ -124,7 +135,6 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
             paint.setTextSize(70);
             return paint;
         }
-
         else return null;
     }
 

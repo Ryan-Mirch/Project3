@@ -36,10 +36,14 @@ public class GameLogic {
 
     private static int currentID = 0;
 
+    private static int screenPressedX = 0;
+    private static int screenPressedY = 0;
+
     private static boolean scorePickupGrabbed = false;
     private static boolean gamePlaying = false;
     private static boolean startNewGame = false;
     private static boolean screenWasPressed = false;
+    private static boolean gameOver = false;
     private static String nextPress = "divide"; //either 'divide' or 'straighten
 
     private static List<Segment> segments = Collections.synchronizedList(new ArrayList<Segment>());
@@ -91,11 +95,13 @@ public class GameLogic {
         borderManager.manageBorders();
 
         gamePlaying = true;
+        gameOver = false;
         startNewGame = false;
     }
 
     public static void gameLoop(long frameTime){
-        if(gameOverCheck())return;
+        gameOver();
+        if(gameOver)return;
         spawnBarriers();
         spawnTraps();
         spawnPickups();
@@ -108,13 +114,17 @@ public class GameLogic {
         addNewSegments();
         removeOffscreenObjects();
         updateScore();
-
     }
 
-    private static boolean gameOverCheck(){
-        if(lives > 0) return false;
-        if(getLeadingSegments().size() > 0) return false;
-        return true;
+    private static void gameOver(){
+        if(lives <= 0 || getLeadingSegments().size() == 0){
+            gameOver = true;
+            if(screenWasPressed){
+                screenWasPressed = false;
+                startNewGame = true;
+                initializeGame();
+            }
+        }
     }
 
     private static void addNewSegments(){
@@ -133,9 +143,6 @@ public class GameLogic {
         if(lastScorePickupTime + 7 <= System.currentTimeMillis() && scorePickupGrabbed){
             scorePickupGrabbed = false;
         }
-
-
-
     }
 
     public static void screenPressed(){
@@ -351,6 +358,10 @@ public class GameLogic {
         return gamePlaying;
     }
 
+    public static boolean getGameOver(){
+        return gameOver;
+    }
+
     public static void setStartNewGame(boolean b){
         startNewGame = b;
     }
@@ -363,8 +374,10 @@ public class GameLogic {
         return Resources.getSystem().getDisplayMetrics().heightPixels;
     }
 
-    public static void setScreenWasPressed(boolean screenWasPressed) {
-        GameLogic.screenWasPressed = screenWasPressed;
+    public static void setScreenWasPressed(Point p) {
+        GameLogic.screenWasPressed = true;
+        screenPressedX = p.x;
+        screenPressedY = p.y;
     }
 
     public static int getCurrentID(){
