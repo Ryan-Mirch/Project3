@@ -80,7 +80,7 @@ public class GameLogic {
         clip.set(0,0, getWidth(), getHeight());
 
         Segment initialSegment = new Segment(centerXPosition, leadingYPosition,0, 0);
-        Trap initialTrap = new Trap(new Point(getWidth()/2, getHeight()/2 - 80), 50);
+        Trap initialTrap = new Trap(new Point(getWidth()/2, getHeight()/2 - 120), 50);
         Pickup initialPickup = new Pickup(new Point(getWidth()/2, getHeight()/2), 10, "score");
 
         segments.add(initialSegment);
@@ -178,12 +178,26 @@ public class GameLogic {
     public static void spawnTraps(){
         if(nextTrapSpawnTime > System.currentTimeMillis())return;
 
-        int randomSpawnTime = random.nextInt(1000*trapMaxSpawnDelay);
-        nextTrapSpawnTime = System.currentTimeMillis() + randomSpawnTime;
-
         int boundaryWidth = borderManager.getCurrentRightBorderX() - borderManager.getCurrentLeftBorderX();
         int width = random.nextInt(60) + 20;
         int xPos = random.nextInt(boundaryWidth - width) + borderManager.getCurrentLeftBorderX() + width/2;
+
+        for(Barrier check: GameLogic.getBarriers()){
+            if(check.getRegion().contains(xPos, 0)){
+                nextPickupSpawnTime += 10;
+                return;
+            }
+        }
+
+        for(Pickup check: GameLogic.getPickups()){
+            if(check.getRegion().contains(xPos, 0)){
+                nextPickupSpawnTime += 10;
+                return;
+            }
+        }
+
+        int randomSpawnTime = random.nextInt(1000*trapMaxSpawnDelay);
+        nextTrapSpawnTime = System.currentTimeMillis() + randomSpawnTime;
 
         Trap newTrap = new Trap(new Point(xPos,0),width);
         traps.add(newTrap);
@@ -192,12 +206,26 @@ public class GameLogic {
     public static void spawnPickups(){
         if(nextPickupSpawnTime > System.currentTimeMillis())return;
 
-        int randomSpawnTime = random.nextInt(1000*pickupMaxSpawnDelay);
-        nextPickupSpawnTime = System.currentTimeMillis() + randomSpawnTime;
-
         int boundaryWidth = borderManager.getCurrentRightBorderX() - borderManager.getCurrentLeftBorderX();
         int width = 20;
         int xPos = random.nextInt(boundaryWidth - width) + borderManager.getCurrentLeftBorderX() + width/2;
+
+        for(Barrier check: GameLogic.getBarriers()){
+            if(check.getRegion().contains(xPos, 0)){
+                nextPickupSpawnTime += 10;
+                return;
+            }
+        }
+
+        for(Pickup check: GameLogic.getPickups()){
+            if(check.getRegion().contains(xPos, 0)){
+                nextPickupSpawnTime += 10;
+                return;
+            }
+        }
+
+        int randomSpawnTime = random.nextInt(1000*pickupMaxSpawnDelay);
+        nextPickupSpawnTime = System.currentTimeMillis() + randomSpawnTime;
 
         Pickup newPickup = new Pickup(new Point(xPos,0),10,"score");
         pickups.add(newPickup);
