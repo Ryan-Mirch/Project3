@@ -95,6 +95,7 @@ public class GameLogic {
     }
 
     public static void gameLoop(long frameTime){
+        if(gameOverCheck())return;
         spawnBarriers();
         spawnTraps();
         spawnPickups();
@@ -107,6 +108,13 @@ public class GameLogic {
         addNewSegments();
         removeOffscreenObjects();
         updateScore();
+
+    }
+
+    private static boolean gameOverCheck(){
+        if(lives > 0) return false;
+        if(getLeadingSegments().size() > 0) return false;
+        return true;
     }
 
     private static void addNewSegments(){

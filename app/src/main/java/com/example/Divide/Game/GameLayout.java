@@ -74,10 +74,6 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
         for(Barrier barrier: GameLogic.getBarriers())barrier.draw(canvas);
         for(Pickup pickup: GameLogic.getPickups())pickup.draw(canvas);
 
-        drawGameInfo(canvas);
-    }
-
-    private void drawGameInfo(Canvas canvas){
         drawScore(canvas);
         drawLives(canvas);
     }
@@ -93,6 +89,8 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
         canvas.drawText("Lives: " + Integer.toString(GameLogic.getLives()),(float) (canvas.getWidth() * 0.75), 70, paint("lives text"));
 
     }
+
+
 
     private Paint paint(String type){
         if(type.equals("black fill")){
