@@ -121,7 +121,7 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
         else if(type.equals("score text")){
             Paint paint = new Paint();
             paint.setColor(Color.WHITE);
-            paint.setStyle(Paint.Style.STROKE);
+            paint.setStyle(Paint.Style.FILL);
             paint.setStrokeWidth(5);
             paint.setTextSize(scoreTextSize);
             return paint;
@@ -130,7 +130,7 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
         else if(type.equals("white text")){
             Paint paint = new Paint();
             paint.setColor(Color.WHITE);
-            paint.setStyle(Paint.Style.STROKE);
+            paint.setStyle(Paint.Style.FILL);
             paint.setStrokeWidth(5);
             paint.setTextSize(70);
             return paint;
