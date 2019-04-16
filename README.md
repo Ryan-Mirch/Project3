@@ -1,21 +1,27 @@
 # Project3
 Ryan Mirch
-2/27/19
+
+3/15/2019
 
 DIVIDE
 
 The Game:
 - The goal in this single-button infinite runner is to survive as long as possible. 
-- Obstacles will appear, and the only way to avoid them is by dividing, splitting yourself into two branches.
-- Every time you tap the screen, all branches that are traveling straight will divide, and all other branches will straighten.
+- Obstacles will appear, and the only way to avoid them is by dividing, splitting yourself into multiple branches.
+- Every other time you tap the screen, your branches will either split, or straighten.
+
 - If two branches hit each other, they will combine into a single straight branch.
-- If any branch hits an obstacle, you lose.
+- If any branch hits a trap, you lose a life.
+- If a branch hits an obstacle, the branch stops.
 
-Current Progress:
-2/27/19
-- very basic main menu
-- dividing
-- combining
+- You lose if all branches have stopped, or if you lose all of your lives.
 
-I look forward to updating this game for future projects in this class.
+Work left to finish:
+- polish main menu view
+- polish how to play view
+- polish game over popup
+- add game sounds
+- incorporate google play
+- add ads
+- publish to google play store
 
