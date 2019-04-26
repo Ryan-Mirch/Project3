@@ -34,9 +34,10 @@ public class Pickup implements GameObject {
         if(type.equals("score")){
             Paint paint = new Paint();
             paint.setColor(Color.YELLOW);
-            paint.setStyle(Paint.Style.STROKE);
+            paint.setStyle(Paint.Style.FILL);
             paint.setStrokeWidth(7);
-            canvas.drawCircle(center.x, center.y, radius, paint);
+            //canvas.drawCircle(center.x, center.y, radius, paint);
+            canvas.drawRect(hitbox,paint);
         }
     }
 

@@ -81,6 +81,8 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
 
         if(!GameLogic.getGameOver())drawScore(canvas);
         if(!GameLogic.getGameOver())drawLives(canvas);
+        if(!GameLogic.getGameOver())drawBranchAmount(canvas);
+
         if(GameLogic.getGameOver())drawGameOverMenu(canvas);
     }
 
@@ -101,6 +103,10 @@ public class GameLayout extends SurfaceView implements SurfaceHolder.Callback{
 
     private void drawLives(Canvas canvas){
         canvas.drawText("Lives: " + Integer.toString(GameLogic.getLives()),(float) (canvas.getWidth() * 0.75), 70, paint("white text"));
+    }
+
+    private void drawBranchAmount(Canvas canvas){
+        canvas.drawText("x" + Integer.toString(GameLogic.getLeadingSegments().size()),(float) (canvas.getWidth() * 0.35), 70, paint("white text"));
     }
 
     private Paint paint(String type){
