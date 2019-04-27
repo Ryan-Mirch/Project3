@@ -1,9 +1,8 @@
+#DIVIDE
 
 Ryan Mirch
 
 4/26/2019
-
-#DIVIDE
 
 A procedurally generated infinite runner type game.
 
