@@ -1,12 +1,16 @@
-# Project3
+
 Ryan Mirch
 
-3/15/2019
+4/26/2019
 
-DIVIDE
+#DIVIDE
 
-The Game:
-- The goal in this single-button infinite runner is to survive as long as possible. 
+A procedurally generated infinite runner type game.
+
+Imagine the game snake, but you can only go forward, and when you tap the screen you split into 2 snakes. 
+
+More specifically...
+
 - Obstacles will appear, and the only way to avoid them is by dividing, splitting yourself into multiple branches.
 - Every other time you tap the screen, your branches will either split, or straighten.
 
